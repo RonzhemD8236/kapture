@@ -9,10 +9,10 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         $users = [
-            ['name' => 'Kyla Baguis',     'email' => 'kyla.baguis@email.com',    'password' => 'password123'],
-            ['name' => 'Ronzhem Dioso',       'email' => 'ronzhem.dioso@email.com',      'password' => 'password123'],
-            ['name' => 'Princess Cruz',    'email' => 'princess.cruz@email.com',   'password' => 'password123'],
-            ['name' => 'Arnold Reyes',    'email' => 'arnold.reyes@email.com',   'password' => 'password123'],
+            ['name' => 'Kyla Baguis',    'email' => 'kyla.baguis@email.com',   'password' => 'password123'],
+            ['name' => 'Ronzhem Dioso',  'email' => 'ronzhem.dioso@email.com', 'password' => 'password123'],
+            ['name' => 'Princess Cruz',  'email' => 'princess.cruz@email.com', 'password' => 'password123'],
+            ['name' => 'Arnold Reyes',   'email' => 'arnold.reyes@email.com',  'password' => 'password123'],
             ['name' => 'Juan Dela Cruz', 'email' => 'juan.dela.cruz@email.com','password' => 'password123'],
         ];
 
