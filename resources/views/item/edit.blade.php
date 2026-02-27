@@ -1,30 +1,49 @@
-
 @extends('layouts.base')
 
 @section('body')
     <div class="container">
-        {!! Form::model($item, ['route' => ['items.update', $item->item_id], 'method' => 'PUT', 'files' => true]) !!}
+        <form action="{{ route('items.update', $item->item_id) }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
 
-        {!! Form::label('desc', 'item name', ['class' => 'form-label']) !!}
-        {!! Form::text('description', null, ['class' => 'form-control', 'id' => 'desc']) !!}
+            <div class="mb-3">
+                <label for="desc" class="form-label">item name</label>
+                <input type="text" name="description" id="desc" class="form-control"
+                    value="{{ old('description', $item->description) }}">
+            </div>
 
-        {!! Form::label('cost', 'cost price', ['class' => 'form-label']) !!}
-        {!! Form::number('cost_price', null, ['min' => 0.0, 'step' => 0.01, 'class' => 'form-control', 'id' => 'cost']) !!}
+            <div class="mb-3">
+                <label for="cost" class="form-label">cost price</label>
+                <input type="number" name="cost_price" id="cost" class="form-control"
+                    min="0" step="0.01"
+                    value="{{ old('cost_price', $item->cost_price) }}">
+            </div>
 
-        {!! Form::label('sell', 'sell price', ['class' => 'form-label']) !!}
-        {!! Form::number('sell_price', null, ['min' => 0.0, 'step' => 0.01, 'class' => 'form-control', 'id' => 'sell']) !!}
+            <div class="mb-3">
+                <label for="sell" class="form-label">sell price</label>
+                <input type="number" name="sell_price" id="sell" class="form-control"
+                    min="0" step="0.01"
+                    value="{{ old('sell_price', $item->sell_price) }}">
+            </div>
 
-        {!! Form::label('qty', 'quantity', ['class' => 'form-label']) !!}
+            <div class="mb-3">
+                <label for="qty" class="form-label">quantity</label>
+                <input type="number" name="quantity" id="qty" class="form-control"
+                    value="{{ old('quantity', $stock->quantity ?? 0) }}">
+            </div>
 
-        {!! Form::number('quantity', empty($stock->quantity) ? 0 : $stock->quantity, [
-            'class' => 'form-control',
-            'id' => 'qty',
-        ]) !!}
+            <div class="mb-3">
+                <label for="image" class="form-label">upload image</label>
+                @if ($item->img_path && $item->img_path !== 'default.jpg')
+                    <div class="mb-2">
+                        <img src="{{ Storage::url($item->img_path) }}" width="80" height="80" alt="current image">
+                        <small class="text-muted d-block">Current image — upload a new one to replace it</small>
+                    </div>
+                @endif
+                <input type="file" name="image" id="image" class="form-control">
+            </div>
 
-
-        {!! Form::label('image', 'upload image', ['class' => 'form-control']) !!}
-        {!! Form::file('image', ['class' => 'form-control']) !!}
-        {!! Form::submit('Update item', ['class' => 'btn btn-primary']) !!}
-        {!! Form::close() !!}
+            <button type="submit" class="btn btn-primary">Update item</button>
+        </form>
     </div>
 @endsection

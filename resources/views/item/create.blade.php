@@ -1,28 +1,48 @@
-
 @extends('layouts.base')
 
 @section('body')
     <div class="container">
         @include('layouts.flash-messages')
-        {!! Form::open(['route' => 'items.store', 'files' => true]) !!}
-        {!! Form::label('desc', 'item name', ['class' => 'form-label']) !!}
-        {!! Form::text('description', null, ['class' => 'form-control', 'id' => 'desc']) !!}
 
-        {!! Form::label('cost', 'cost price', ['class' => 'form-label']) !!}
-        {!! Form::number('cost_price', 0.0, ['min' => 0.0, 'step' => 0.01, 'class' => 'form-control', 'id' => 'cost']) !!}
+        <form action="{{ route('items.store') }}" method="POST" enctype="multipart/form-data">
+            @csrf
 
-        {!! Form::label('sell', 'sell price', ['class' => 'form-label']) !!}
-        {!! Form::number('sell_price', 0.0, ['min' => 0.0, 'step' => 0.01, 'class' => 'form-control', 'id' => 'sell']) !!}
+            <div class="mb-3">
+                <label for="desc" class="form-label">item name</label>
+                <input type="text" name="description" id="desc" class="form-control"
+                    value="{{ old('description') }}">
+                @error('description')
+                    <div class="alert alert-danger mt-1">{{ $message }}</div>
+                @enderror
+            </div>
 
-        {!! Form::label('qty', 'quantity', ['class' => 'form-label']) !!}
-        {!! Form::number('quantity', 0, ['class' => 'form-control', 'id' => 'qty']) !!}
+            <div class="mb-3">
+                <label for="cost" class="form-label">cost price</label>
+                <input type="number" name="cost_price" id="cost" class="form-control"
+                    min="0" step="0.01" value="{{ old('cost_price', 0) }}">
+            </div>
 
-        {!! Form::label('image', 'upload image', ['class' => 'form-control']) !!}
-        {!! Form::file('image', ['class' => 'form-control']) !!}
-        @error('image')
-            <div class="alert alert-danger">{{ $message }}</div>
-        @enderror
-        {!! Form::submit('Add item', ['class' => 'btn btn-primary']) !!}
-        {!! Form::close() !!}
+            <div class="mb-3">
+                <label for="sell" class="form-label">sell price</label>
+                <input type="number" name="sell_price" id="sell" class="form-control"
+                    min="0" step="0.01" value="{{ old('sell_price', 0) }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="qty" class="form-label">quantity</label>
+                <input type="number" name="quantity" id="qty" class="form-control"
+                    value="{{ old('quantity', 0) }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="image" class="form-label">upload image</label>
+                <input type="file" name="image" id="image" class="form-control">
+                @error('image')
+                    <div class="alert alert-danger mt-1">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add item</button>
+        </form>
     </div>
 @endsection
