@@ -1,70 +1,87 @@
 @extends('layouts.base')
+
 @section('body')
-    <div id="items" class="container">
-        @include('layouts.flash-messages')
-        <a class="btn btn-primary" href="{{ route('items.create') }}" role="button">add</a>
-        {{--  --}}
-        <form method="POST" enctype="multipart/form-data" action="{{ route('item.import') }}">
-            {{-- <form method="POST" enctype="multipart/form-data" action=""> --}}
-            @csrf
-            <input type="file" id="uploadName" name="item_upload" required>
-            <button type="submit" class="btn btn-info btn-primary ">Import Excel File</button>
+@include('layouts.flash-messages')
 
-        </form>
-        <div class="card-body" style="height: 210px;">
-            <input type="text" id='itemSearch' placeholder="--search--">
-        </div>
-        <div class="table-responsive">
-            <table id="itable" class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th>item ID</th>
-                        <th>Image</th>
-                        <th>description</th>
-                        <th>sell price</th>
-                        <th>cost price</th>
-                        <th>quantity</th>
-                        <th>Action</th>
+<div class="container-fluid px-4 py-3">
 
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($items as $item)
-                        <tr>
-                            <td>{{ $item->item_id }}</td>
-                            @if ($item->img_path)
-                                <td><img src="{{ Storage::url($item->img_path) }}" alt="item image" width="50"
-                                        height="50">
-                                </td>
-                            @else
-                                <td><img src="#" alt="item image" width="50" height="50">
-                                </td>
-                            @endif
+    {{-- Add button --}}
+    <a href="{{ route('items.create') }}" class="btn btn-primary mb-3">Add Item</a>
 
-                            <td>{{ $item->description }}</td>
-                            <td>{{ $item->sell_price }}</td>
-                            <td>{{ $item->cost_price }}</td>
-                            <td>{{ $item->quantity }}</td>
-                            @if ($item->deleted_at === null)
-                                <td><a href="{{ route('items.edit', $item->item_id) }}"><i class="fas fa-edit"></i></a>
-                                    <form action="{{ route('items.destroy', $item->item_id) }}" method="POST">
-                                        @method('DELETE')
-                                        @csrf
-                                        <button><i class="fas fa-trash" style="color:red"></i></button>
-                                    </form>
-                                    <i class="fa-solid fa-rotate-left" style="color:gray"></i>
-                                </td>
-                            @else
-                                <td><i class="fas fa-edit" style="color:gray"></i>
-                                    <i class="fas fa-trash" style="color:gray"></i>
-                                    {{-- <a href="{{ route('items.restore', $item->id) }}"><i class="fa-solid fa-rotate-left"
-                                            style="color:blue"></i></a> --}}
-                                </td>
-                            @endif
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    </div>
+    {{-- Excel import --}}
+    <form action="{{ route('item.import') }}" method="POST" enctype="multipart/form-data"
+          class="d-inline-flex align-items-center gap-2 mb-3">
+        @csrf
+        <input type="file" name="file" class="form-control form-control-sm" style="width:auto;">
+        <button type="submit" class="btn btn-info text-white">Import Excel File</button>
+    </form>
+
+    {{-- Search --}}
+    <form method="GET" action="{{ route('items.index') }}" class="mb-3">
+        <input type="text"
+               name="search"
+               value="{{ request('search') }}"
+               placeholder="Search description..."
+               class="form-control"
+               style="width: 220px;">
+    </form>
+
+    {{-- Table --}}
+    <table class="table table-bordered table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Item ID</th>
+                <th>Image</th>
+                <th>Description</th>
+                <th>Sell Price</th>
+                <th>Cost Price</th>
+                <th>Quantity</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($items as $item)
+            <tr>
+                <td>{{ $item->item_id }}</td>
+                <td>
+                    <img src="{{ $item->img_path === 'default.jpg'
+                                    ? asset('images/default.jpg')
+                                    : asset('storage/' . $item->img_path) }}"
+                         alt="item image"
+                         style="width: 60px; height: 60px; object-fit: cover;">
+                </td>
+                <td>{{ $item->description }}</td>
+                <td>{{ number_format($item->sell_price, 2) }}</td>
+                <td>{{ number_format($item->cost_price, 2) }}</td>
+                <td>{{ $item->quantity ?? 0 }}</td>
+                <td>
+                    {{-- Edit --}}
+                    <a href="{{ route('items.edit', $item->item_id) }}"
+                       class="btn btn-sm btn-outline-primary mb-1">
+                        <i class="bi bi-pencil-square"></i>
+                    </a>
+
+                    {{-- Delete --}}
+                    <form action="{{ route('items.destroy', $item->item_id) }}"
+                          method="POST"
+                          class="d-inline"
+                          onsubmit="return confirm('Delete this item?')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm btn-danger mb-1">
+                            <i class="bi bi-trash-fill"></i>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="7" class="text-center text-muted">No items found.</td>
+            </tr>
+            @endforelse
+        </tbody>
+    </table>
+
+    {{ $items->withQueryString()->links() }}
+</div>
 @endsection

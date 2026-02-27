@@ -1,48 +1,56 @@
 @extends('layouts.base')
 
 @section('body')
-    <div class="container">
-        @include('layouts.flash-messages')
+<div class="container py-4" style="max-width: 600px;">
+    <h4 class="mb-4">Add New Item</h4>
 
-        <form action="{{ route('items.store') }}" method="POST" enctype="multipart/form-data">
-            @csrf
+    @if($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-            <div class="mb-3">
-                <label for="desc" class="form-label">item name</label>
-                <input type="text" name="description" id="desc" class="form-control"
-                    value="{{ old('description') }}">
-                @error('description')
-                    <div class="alert alert-danger mt-1">{{ $message }}</div>
-                @enderror
-            </div>
+    <form action="{{ route('items.store') }}" method="POST" enctype="multipart/form-data">
+        @csrf
 
-            <div class="mb-3">
-                <label for="cost" class="form-label">cost price</label>
-                <input type="number" name="cost_price" id="cost" class="form-control"
-                    min="0" step="0.01" value="{{ old('cost_price', 0) }}">
-            </div>
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea name="description" class="form-control" rows="3" required>{{ old('description') }}</textarea>
+        </div>
 
-            <div class="mb-3">
-                <label for="sell" class="form-label">sell price</label>
-                <input type="number" name="sell_price" id="sell" class="form-control"
-                    min="0" step="0.01" value="{{ old('sell_price', 0) }}">
-            </div>
+        <div class="mb-3">
+            <label class="form-label">Sell Price</label>
+            <input type="number" step="0.01" name="sell_price"
+                   class="form-control" value="{{ old('sell_price') }}" required>
+        </div>
 
-            <div class="mb-3">
-                <label for="qty" class="form-label">quantity</label>
-                <input type="number" name="quantity" id="qty" class="form-control"
-                    value="{{ old('quantity', 0) }}">
-            </div>
+        <div class="mb-3">
+            <label class="form-label">Cost Price</label>
+            <input type="number" step="0.01" name="cost_price"
+                   class="form-control" value="{{ old('cost_price') }}" required>
+        </div>
 
-            <div class="mb-3">
-                <label for="image" class="form-label">upload image</label>
-                <input type="file" name="image" id="image" class="form-control">
-                @error('image')
-                    <div class="alert alert-danger mt-1">{{ $message }}</div>
-                @enderror
-            </div>
+        <div class="mb-3">
+            <label class="form-label">Quantity</label>
+            <input type="number" name="quantity"
+                   class="form-control" value="{{ old('quantity', 0) }}"
+                   min="0" required>
+        </div>
 
-            <button type="submit" class="btn btn-primary">Add item</button>
-        </form>
-    </div>
+        <div class="mb-3">
+            <label class="form-label">Item Image</label>
+            <input type="file" name="image" class="form-control" accept="image/*">
+            <small class="text-muted">Leave blank to use the default image.</small>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Save Item</button>
+            <a href="{{ route('items.index') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
 @endsection
