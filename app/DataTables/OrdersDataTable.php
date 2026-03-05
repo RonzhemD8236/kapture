@@ -34,19 +34,32 @@ class OrdersDataTable extends DataTable
     /**
      * Get the query source of dataTable.
      */
-    public function query()
+        public function query()
     {
         $orders = DB::table('customer as c')
-            ->join('orderinfo as o', 'o.customer_id', '=', 'c.customer_id')
-            ->join('orderline as ol', 'o.orderinfo_id', '=', 'ol.orderinfo_id')
+            ->join('orders as o', 'o.customer_id', '=', 'c.id')
+            ->join('order_items as ol', 'o.order_id', '=', 'ol.order_id')
             ->join('item as i', 'ol.item_id', '=', 'i.item_id')
-            ->select('o.orderinfo_id as orderinfo_id', 'c.fname', 'c.lname', 'c.addressline', 'o.date_placed', 'o.status', DB::raw("SUM(ol.quantity * i.sell_price) as total"))
-            ->groupBy('o.orderinfo_id');
+            ->select(
+                'o.order_id as orderinfo_id',
+                'c.fname',
+                'c.lname',
+                'c.addressline',
+                'o.order_date as date_placed',
+                'o.status',
+                DB::raw('SUM(ol.quantity * i.sell_price) as total')
+            )
+            ->groupBy(
+                'o.order_id',
+                'c.fname',
+                'c.lname',
+                'c.addressline',
+                'o.order_date',
+                'o.status'
+            ); // ✅ all selected non-aggregate columns must be here
 
-        //    dd($orders);
         return $orders;
     }
-
     /**
      * Optional method if you want to use the html builder.
      */
@@ -70,20 +83,20 @@ class OrdersDataTable extends DataTable
      */
     public function getColumns(): array
     {
-        return [
-            Column::computed('action')
-                ->exportable(false)
-                ->printable(false)
-                ->width(60)
-                ->addClass('text-center'),
-            ['data' => 'orderinfo_id', 'name' => 'o.orderinfo_id', 'title' => 'order id'],
-            ['data' => 'lname', 'name' => 'c.lname', 'title' => 'last name'],
-            ['data' => 'fname', 'name' => 'c.fname', 'title' => 'first Name'],
-            ['data' => 'addressline', 'name' => 'c.addressline', 'title' => 'address'],
-            ['data' => 'date_placed', 'name' => 'o.date_placed', 'title' => 'date ordered'],
-            ['data' => 'status', 'name' => 'o.status', 'title' => 'status'],
-            Column::make('total')->searchable(false)
-        ];
+    return [
+        Column::computed('action')
+            ->exportable(false)
+            ->printable(false)
+            ->width(60)
+            ->addClass('text-center'),
+        ['data' => 'orderinfo_id', 'name' => 'o.order_id',       'title' => 'Order ID'],   // ✅ was o.orderinfo_id
+        ['data' => 'lname',        'name' => 'c.lname',           'title' => 'Last Name'],
+        ['data' => 'fname',        'name' => 'c.fname',           'title' => 'First Name'],
+        ['data' => 'addressline',  'name' => 'c.addressline',     'title' => 'Address'],
+        ['data' => 'date_placed',  'name' => 'o.order_date',      'title' => 'Date Ordered'], // ✅ was o.date_placed
+        ['data' => 'status',       'name' => 'o.status',          'title' => 'Status'],
+        Column::make('total')->searchable(false),
+    ];
     }
 
     /**

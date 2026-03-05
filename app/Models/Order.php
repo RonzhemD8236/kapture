@@ -5,8 +5,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    protected $table = 'order';
-    protected $primaryKey = 'order_id';
+    protected $table = 'orders'; // ✅ not a reserved word
+    protected $primaryKey = 'order_id'; 
 
     protected $fillable = [
         'customer_id',
