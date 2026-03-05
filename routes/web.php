@@ -5,7 +5,9 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
+
 
 // Auth Routes
 Auth::routes();
@@ -31,7 +33,12 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
     Route::get('/users', [DashboardController::class, 'getUsers'])->name('admin.users');
     Route::get('/customers', [DashboardController::class, 'getCustomers'])->name('admin.customers');
-    Route::resource('customers', CustomerController::class); // full CRUD for admin
+    Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
+    Route::post('/users/store', [UserController::class, 'store'])->name('users.store');
+    Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
+    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+    Route::resource('customers', CustomerController::class);
     Route::get('/orders', [DashboardController::class, 'getOrders'])->name('admin.orders');
     Route::get('/order/{id}', [OrderController::class, 'processOrder'])->name('admin.orderDetails');
     Route::post('/order/{id}', [OrderController::class, 'orderUpdate'])->name('admin.orderUpdate');
