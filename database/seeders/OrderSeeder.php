@@ -70,7 +70,7 @@ class OrderSeeder extends Seeder
                 $item     = Item::find($orderItem['item_id']);
                 $subtotal = $item->sell_price * $orderItem['quantity'];
 
-                DB::table('order_item')->insert([
+                DB::table('order_items')->insert([
                     'order_id'   => $order->order_id,
                     'item_id'    => $item->item_id,
                     'quantity'   => $orderItem['quantity'],

@@ -7,14 +7,14 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('order', function (Blueprint $table) {
-            $table->id('order_id');
-            $table->unsignedBigInteger('customer_id');
-            $table->decimal('total_amount', 10, 2);
-            $table->enum('status', ['pending', 'processing', 'completed', 'cancelled'])->default('pending');
-            $table->timestamp('order_date')->useCurrent();
-            $table->timestamps();
-        });
+        Schema::create('orders', function (Blueprint $table) {
+        $table->id('order_id');
+        $table->unsignedBigInteger('customer_id'); // this links to customer.id
+        $table->decimal('total_amount', 10, 2);
+        $table->enum('status', ['pending', 'processing', 'completed', 'cancelled'])->default('pending');
+        $table->timestamp('order_date')->useCurrent();
+        $table->timestamps();
+    });
     }
 
     public function down(): void
