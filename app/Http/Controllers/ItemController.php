@@ -39,7 +39,7 @@ class ItemController extends Controller
         $query->where('i.description', 'like', '%' . $request->search . '%');
     }
 
-    $items = $query->orderBy('i.item_id')->paginate(15);
+    $items = $query->orderBy('i.item_id')->paginate(10);
 
     return view('item.index', compact('items'));
     }
