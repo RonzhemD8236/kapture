@@ -31,6 +31,7 @@ Route::prefix('customer')->middleware(['auth'])->group(function () {
 // Admin Routes
 Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+    Route::get('/admin/dashboard/product-chart', [DashboardController::class, 'productChartData'])->name('dashboard.productChartData');
     Route::get('/users', [DashboardController::class, 'getUsers'])->name('admin.users');
     Route::get('/customers', [DashboardController::class, 'getCustomers'])->name('admin.customers');
     Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
@@ -43,5 +44,8 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::get('/order/{id}', [OrderController::class, 'processOrder'])->name('admin.orderDetails');
     Route::post('/order/{id}', [OrderController::class, 'orderUpdate'])->name('admin.orderUpdate');
     Route::post('/items-import', [ItemController::class, 'import'])->name('item.import');
+    Route::get('/items/trash', [ItemController::class, 'trash'])->name('items.trash');
+    Route::patch('/items/{id}/restore', [ItemController::class, 'restore'])->name('items.restore');
+    Route::delete('/items/{id}/force-delete', [ItemController::class, 'forceDelete'])->name('items.forceDelete');
     Route::resource('items', ItemController::class);
 });
