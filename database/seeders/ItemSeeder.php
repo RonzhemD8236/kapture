@@ -1,42 +1,65 @@
 <?php
+
 namespace Database\Seeders;
+
 use Illuminate\Database\Seeder;
-use App\Models\Item;
-use App\Models\Stock;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class ItemSeeder extends Seeder
 {
     public function run(): void
     {
         $cameras = [
-            ['name' => 'Canon EOS R50',            'cost' => 479.99,  'sell' => 599.99],
-            ['name' => 'Sony Alpha A7 III',         'cost' => 1799.99, 'sell' => 2199.99],
-            ['name' => 'Nikon Z50',                 'cost' => 699.99,  'sell' => 859.99],
-            ['name' => 'Fujifilm X-T5',             'cost' => 1299.99, 'sell' => 1599.99],
-            ['name' => 'Sony ZV-E10',               'cost' => 549.99,  'sell' => 749.99],
-            ['name' => 'GoPro Hero 11 Black',       'cost' => 299.99,  'sell' => 399.99],
-            ['name' => 'Canon PowerShot G7 X III',  'cost' => 649.99,  'sell' => 829.99],
-            ['name' => 'Sony RX100 VII',             'cost' => 1149.99, 'sell' => 1299.99],
-            ['name' => 'Panasonic Lumix GH6',       'cost' => 1699.99, 'sell' => 1999.99],
-            ['name' => 'Nikon Z30',                 'cost' => 599.99,  'sell' => 799.99],
+            ['title' => 'Canon EOS R50',           'category' => 'Mirrorless',    'cost' => 479.99,  'sell' => 599.99],
+            ['title' => 'Sony Alpha A7 III',        'category' => 'Mirrorless',    'cost' => 1799.99, 'sell' => 2199.99],
+            ['title' => 'Nikon Z50',                'category' => 'Mirrorless',    'cost' => 699.99,  'sell' => 859.99],
+            ['title' => 'Fujifilm X-T5',            'category' => 'Mirrorless',    'cost' => 1299.99, 'sell' => 1599.99],
+            ['title' => 'Sony ZV-E10',              'category' => 'Mirrorless',    'cost' => 549.99,  'sell' => 749.99],
+            ['title' => 'GoPro Hero 11 Black',      'category' => 'Action Camera', 'cost' => 299.99,  'sell' => 399.99],
+            ['title' => 'Canon PowerShot G7 X III', 'category' => 'Point & Shoot', 'cost' => 649.99,  'sell' => 829.99],
+            ['title' => 'Sony RX100 VII',            'category' => 'Point & Shoot', 'cost' => 1149.99, 'sell' => 1299.99],
+            ['title' => 'Panasonic Lumix GH6',      'category' => 'Mirrorless',    'cost' => 1699.99, 'sell' => 1999.99],
+            ['title' => 'Nikon Z30',                'category' => 'Mirrorless',    'cost' => 599.99,  'sell' => 799.99],
         ];
 
         foreach ($cameras as $camera) {
-            $item = new Item();
-            $item->description = $camera['name'];
-            $item->cost_price   = $camera['cost'];
-            $item->sell_price   = $camera['sell'];
-            $item->img_path     = 'default.jpg';
-            $item->save();
+            $existing = DB::table('item')->where('title', $camera['title'])->first();
 
-            Log::info("item id", ["item id" => $item->item_id]);
+            if ($existing) {
+                DB::table('item')->where('item_id', $existing->item_id)->update([
+                    'category'   => $camera['category'],
+                    'cost_price' => $camera['cost'],
+                    'sell_price' => $camera['sell'],
+                    'updated_at' => now(),
+                ]);
+                $itemId = $existing->item_id;
+            } else {
+                $itemId = DB::table('item')->insertGetId([
+                    'title'       => $camera['title'],
+                    'category'    => $camera['category'],
+                    'description' => $camera['title'], // placeholder, edit via admin
+                    'cost_price'  => $camera['cost'],
+                    'sell_price'  => $camera['sell'],
+                    'img_path'    => 'default.jpg',
+                    'images'      => null,
+                    'created_at'  => now(),
+                    'updated_at'  => now(),
+                ]);
+            }
 
-            $stock = new Stock();
-            $stock->item_id       = $item->item_id;
-            $stock->quantity      = 20;
-            $stock->reorder_level = 10;
-            $stock->save();
+            $stock = DB::table('stock')->where('item_id', $itemId)->first();
+
+            if ($stock) {
+                DB::table('stock')->where('item_id', $itemId)->update(['updated_at' => now()]);
+            } else {
+                DB::table('stock')->insert([
+                    'item_id'       => $itemId,
+                    'quantity'      => 20,
+                    'reorder_level' => 10,
+                    'created_at'    => now(),
+                    'updated_at'    => now(),
+                ]);
+            }
         }
     }
 }
