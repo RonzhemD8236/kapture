@@ -3,163 +3,167 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\DataTables\UsersDataTable;
 use App\DataTables\CustomersDataTable;
 use App\DataTables\OrdersDataTable;
+use App\DataTables\UsersDataTable;
 use Illuminate\Support\Facades\DB;
-use App\Charts\CustomerChart;
 use App\Charts\MonthlySalesChart;
 use App\Charts\ItemChart;
 
 class DashboardController extends Controller
 {
-    private $bgcolor;
-    public function __construct()
-    {
+    private $bgcolor = [
+        '#C9A84C', '#e0c068', '#a07830', '#f0d888', '#806020',
+        '#d4a840', '#b89028', '#c0a050', '#e8c878', '#987030',
+        '#C9A84C', '#e0c068', '#a07830', '#f0d888', '#806020',
+    ];
 
-        $this->bgcolor = collect([
-            '#7158e2',
-            '#3ae374',
-            '#ff3838',
-            "#FF851B",
-            "#7FDBFF",
-            "#B10DC9",
-            "#FFDC00",
-            "#001f3f",
-            "#39CCCC",
-            "#01FF70",
-            "#85144b",
-            "#F012BE",
-            "#3D9970",
-            "#111111",
-            "#AAAAAA",
-        ]);
-    }
-
-    public function index()
+    public function index(Request $request)
     {
-        // SELECT count(addressline), addressline from customer group by addressline;
-        $customers = DB::table('customer')
-            ->whereNotNull('addressline')
-            // ->select(DB::raw('count(addressline) as total'), 'addressline')
-            // ->pluck('addressline')->all();
-            ->groupBy('addressline')
-            ->orderBy('total', 'DESC')
-            ->pluck(DB::raw('count(addressline) as total'), 'addressline')
+        // ── Stat Cards ────────────────────────────────────────────────────────
+        $totalOrders  = DB::table('orders')->count();
+        $totalRevenue = DB::table('order_items')->sum('subtotal');
+        $totalUsers   = DB::table('users')->count();
+        $totalItems   = DB::table('item')->whereNull('deleted_at')->count();
+
+        // ── 1. Yearly Sales Bar Chart (last 5 years) ──────────────────────────
+        $yearlySalesRaw = DB::table('orders as o')
+            ->join('order_items as oi', 'o.order_id', '=', 'oi.order_id')
+            ->whereBetween(DB::raw('YEAR(o.order_date)'), [now()->year - 4, now()->year])
+            ->groupBy(DB::raw('YEAR(o.order_date)'))
+            ->orderBy(DB::raw('YEAR(o.order_date)'))
+            ->pluck(DB::raw('SUM(oi.subtotal) as total'), DB::raw('YEAR(o.order_date) as year'))
             ->all();
-        // dd(array_values($customers));
 
-        $customerChart = new CustomerChart;
-        $dataset = $customerChart->labels(array_keys($customers));
-        // dd($dataset);
-        $dataset = $customerChart->dataset(
-            'Customer Demographics',
-            'bar',
-            array_values($customers)
-        );
-        // dd($dataset);
-        $dataset = $dataset->backgroundColor($this->bgcolor);
-        $customerChart->options([
-            'responsive' => true,
-            'legend' => ['display' => true],
-            'tooltips' => ['enabled' => true],
-            'aspectRatio' => 1,
-            'scales' => [
-                'yAxes' => [
-                    [
-                        'display' => true,
-                    ],
-                ],
-                'xAxes' => [
-                    [
-                        'gridLines' => ['display' => false],
-                        'display' => true,
-                    ],
-                ],
+        $yearLabels = [];
+        $yearTotals = [];
+        for ($y = now()->year - 4; $y <= now()->year; $y++) {
+            $yearLabels[] = (string) $y;
+            $yearTotals[] = round($yearlySalesRaw[$y] ?? 0, 2);
+        }
+
+        $yearlyChart = new MonthlySalesChart;
+        $yearlyChart->labels($yearLabels);
+        $dataset = $yearlyChart->dataset('Yearly Revenue (₱)', 'bar', $yearTotals);
+        $dataset->backgroundColor($this->bgcolor);
+        $yearlyChart->options([
+            'responsive'  => true,
+            'aspectRatio' => 6,
+            'legend'      => ['display' => false],
+            'tooltips'    => ['enabled' => true],
+            'scales'      => [
+                'yAxes' => [['display' => true, 'ticks' => ['beginAtZero' => true, 'maxTicksLimit' => 5]]],
+                'xAxes' => [['gridLines' => ['display' => false], 'display' => true]],
             ],
         ]);
 
-        $orders = DB::table('orderinfo as o')
-            ->join('orderline as ol', 'o.orderinfo_id', '=', 'ol.orderinfo_id')
-            ->join('item as i', 'i.item_id', '=', 'ol.item_id')
-            ->groupBy(DB::raw('month(o.date_placed)'))
-            ->pluck(DB::raw('sum(i.sell_price * ol.quantity) AS total'), DB::raw('monthname(o.date_placed) as month'))
-            ->all();
-        // dd($orders);
+        // ── 2. Sales by Product Bar Chart with Date Range ─────────────────────
+        $dateFrom = $request->input('date_from', now()->startOfMonth()->format('Y-m-d'));
+        $dateTo   = $request->input('date_to',   now()->format('Y-m-d'));
 
-        $salesChart = new MonthlySalesChart;
-        $dataset = $salesChart->labels(array_keys($orders));
-        $dataset = $salesChart->dataset(
-            'Monthly sales 2026',
-            'line',
-            array_values($orders)
-        );
+        $productSalesRaw = DB::table('orders as o')
+            ->join('order_items as oi', 'o.order_id', '=', 'oi.order_id')
+            ->join('item as i', 'oi.item_id', '=', 'i.item_id')
+            ->whereBetween(DB::raw('DATE(o.order_date)'), [$dateFrom, $dateTo])
+            ->select('i.title', DB::raw('SUM(oi.subtotal) as total'))
+            ->groupBy('i.item_id', 'i.title')
+            ->orderByDesc('total')
+            ->limit(10)
+            ->get();
 
-
-        $salesChart->options([
-            'indexAxis' => 'y',
-            'responsive' => true,
-            'legend' => ['display' => true],
-            'tooltips' => ['enabled' => true],
-            'aspectRatio' => 1,
-            'scales' => [
-                'yAxes' => [
-                    [
-                        'display' => true,
-                    ],
-                ],
-                'xAxes' => [
-                    [
-                        'gridLines' => ['display' => false],
-                        'display' => true,
-                    ],
-                ],
+        $productBarChart = new MonthlySalesChart;
+        $productBarChart->labels($productSalesRaw->pluck('title')->toArray());
+        $dataset = $productBarChart->dataset('Revenue (₱)', 'bar', $productSalesRaw->map(fn($r) => round($r->total, 2))->toArray());
+        $dataset->backgroundColor($this->bgcolor);
+        $productBarChart->options([
+            'responsive'  => true,
+            'aspectRatio' => 4,
+            'legend'      => ['display' => false],
+            'tooltips'    => ['enabled' => true],
+            'scales'      => [
+                'yAxes' => [['display' => true, 'ticks' => ['beginAtZero' => true, 'maxTicksLimit' => 5]]],
+                'xAxes' => [['gridLines' => ['display' => false], 'display' => true]],
             ],
-            'fill' => false,
-            'borderColor' => 'blue'
         ]);
 
-        $items = DB::table('orderline AS ol')
-            ->join('item AS i', 'ol.item_id', '=', 'i.item_id')
-            ->groupBy('i.description')
-            ->orderBy('total', 'DESC')
-            ->pluck(DB::raw('sum(ol.quantity) AS total'), 'description')
-            ->all();
-        // dd($items);
+        // ── 3. Sales per Product Pie Chart ────────────────────────────────────
+        $itemsRaw = DB::table('order_items AS oi')
+            ->join('item AS i', 'oi.item_id', '=', 'i.item_id')
+            ->join('orders AS o', 'oi.order_id', '=', 'o.order_id')
+            ->groupBy('i.item_id', 'i.title')
+            ->orderByDesc('total')
+            ->select('i.title', DB::raw('SUM(oi.subtotal) AS total'))
+            ->get();
+
+        $grandTotal = $itemsRaw->sum('total') ?: 1;
+        $pieData = $itemsRaw->map(fn($r) => round(($r->total / $grandTotal) * 100, 2))->toArray();
 
         $itemChart = new ItemChart;
-        $dataset = $itemChart->labels(array_keys($items));
-        // dd($dataset);
-        $dataset = $itemChart->dataset(
-            'Item sold',
-            'doughnut',
-            array_values($items)
-        );
-
-        $dataset = $dataset->backgroundColor($this->bgcolor);
-
-        $dataset = $dataset->fill(false);
+        $itemChart->labels($itemsRaw->pluck('title')->toArray());
+        $dataset = $itemChart->dataset('% of Sales', 'pie', $pieData);
+        $dataset->backgroundColor($this->bgcolor);
+        $dataset->fill(false);
         $itemChart->options([
-            'responsive' => true,
-            'legend' => ['display' => true],
-            'tooltips' => ['enabled' => true],
-            'aspectRatio' => 1,
+            'responsive'  => true,
+            'aspectRatio' => 1.3,
+            'legend'      => ['display' => false],
+            'tooltips'    => ['enabled' => true],
+            'scales'      => [
+                'x'     => ['display' => false],
+                'y'     => ['display' => false],
+                'xAxes' => [['display' => false]],
+                'yAxes' => [['display' => false]],
+            ],
         ]);
 
-        return view('dashboard.index', compact('customerChart', 'salesChart', 'itemChart'));
+        return view('dashboard.index', compact(
+            'yearlyChart',
+            'productBarChart',
+            'itemChart',
+            'dateFrom',
+            'dateTo',
+            'totalOrders',
+            'totalRevenue',
+            'totalUsers',
+            'totalItems'
+        ));
     }
-    public function getUsers(UsersDataTable $dataTable)
+
+    public function productChartData(Request $request)
     {
+        $dateFrom = $request->input('date_from', now()->startOfMonth()->format('Y-m-d'));
+        $dateTo   = $request->input('date_to',   now()->format('Y-m-d'));
+
+        $data = DB::table('orders as o')
+            ->join('order_items as oi', 'o.order_id', '=', 'oi.order_id')
+            ->join('item as i', 'oi.item_id', '=', 'i.item_id')
+            ->whereBetween(DB::raw('DATE(o.order_date)'), [$dateFrom, $dateTo])
+            ->select('i.title', DB::raw('SUM(oi.subtotal) as total'))
+            ->groupBy('i.item_id', 'i.title')
+            ->orderByDesc('total')
+            ->limit(10)
+            ->get();
+
+        return response()->json([
+            'labels' => $data->pluck('title'),
+            'totals' => $data->map(fn($r) => round($r->total, 2)),
+        ]);
+    }
+
+    public function getUsers(UsersDataTable $dataTable, Request $request)
+    {
+        if ($request->ajax()) return $dataTable->ajax();
         return $dataTable->render('dashboard.users');
     }
 
     public function getCustomers(CustomersDataTable $dataTable)
     {
-        return $dataTable->render('dashboard.customers');
+        return $dataTable->render('dashboard.orders');
     }
 
-    public function getOrders(OrdersDataTable $dataTable)
+    public function getOrders(OrdersDataTable $dataTable, Request $request)
     {
+        if ($request->ajax()) return $dataTable->ajax();
         return $dataTable->render('dashboard.orders');
     }
 }
