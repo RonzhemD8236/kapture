@@ -106,47 +106,6 @@
         text-decoration: none;
     }
 
-    .btn-kapture-secondary {
-        background: transparent;
-        border: 1px solid var(--kapture-border-subtle);
-        color: var(--kapture-lilac);
-        font-family: 'Montserrat', sans-serif;
-        font-size: 0.8rem;
-        font-weight: 500;
-        letter-spacing: 0.15em;
-        text-transform: uppercase;
-        padding: 0.7rem 1.6rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .btn-kapture-secondary:hover {
-        border-color: var(--kapture-lilac);
-        color: #fff;
-    }
-
-    .kapture-file-input {
-        background: transparent;
-        border: 1px solid var(--kapture-border-subtle);
-        color: var(--kapture-text);
-        font-family: 'Montserrat', sans-serif;
-        font-size: 0.85rem;
-        padding: 0.65rem 0.75rem;
-        letter-spacing: 0.05em;
-        width: auto;
-    }
-
-    .kapture-file-input:focus {
-        outline: none;
-        border-color: var(--kapture-gold);
-        box-shadow: none;
-        background: transparent;
-        color: var(--kapture-text);
-    }
-
     .toolbar-divider {
         width: 1px;
         height: 36px;
@@ -172,7 +131,10 @@
         transition: border-color 0.3s;
     }
 
-    .kapture-search::placeholder { color: var(--kapture-muted); font-style: italic; }
+    .kapture-search::placeholder {
+        color: var(--kapture-muted);
+        font-style: italic;
+    }
 
     .kapture-search:focus {
         outline: none;
@@ -228,8 +190,13 @@
         transition: background 0.2s ease;
     }
 
-    .kapture-table tbody tr:last-child { border-bottom: none; }
-    .kapture-table tbody tr:hover { background: rgba(168, 155, 194, 0.05); }
+    .kapture-table tbody tr:last-child {
+        border-bottom: none;
+    }
+
+    .kapture-table tbody tr:hover {
+        background: rgba(168, 155, 194, 0.05);
+    }
 
     .kapture-table tbody td {
         padding: 1.1rem 1.4rem;
@@ -268,7 +235,9 @@
         letter-spacing: 0.04em;
     }
 
-    .item-cost { color: var(--kapture-text); }
+    .item-cost {
+        color: var(--kapture-text);
+    }
 
     .item-qty {
         font-family: 'Cormorant Garamond', serif;
@@ -276,15 +245,25 @@
         color: var(--kapture-text);
     }
 
-    .qty-low { color: #c06060; }
+    .deleted-date {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 0.72rem;
+        color: #c06060;
+        letter-spacing: 0.05em;
+        white-space: nowrap;
+    }
 
     /* ── Action Buttons ── */
-    .action-wrap { display: flex; align-items: center; gap: 0.5rem; }
+    .action-wrap {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
 
-    .btn-action-edit {
+    .btn-action-restore {
         background: transparent;
-        border: 1px solid var(--kapture-border-subtle);
-        color: var(--kapture-lilac);
+        border: 1px solid rgba(100, 180, 100, 0.35);
+        color: #80c080;
         width: 36px;
         height: 36px;
         display: inline-flex;
@@ -292,14 +271,13 @@
         justify-content: center;
         font-size: 0.85rem;
         transition: all 0.2s;
-        text-decoration: none;
+        cursor: pointer;
     }
 
-    .btn-action-edit:hover {
-        border-color: var(--kapture-lilac);
-        color: #fff;
-        background: rgba(168, 155, 194, 0.1);
-        text-decoration: none;
+    .btn-action-restore:hover {
+        border-color: #80c080;
+        background: rgba(100, 180, 100, 0.1);
+        color: #a0e0a0;
     }
 
     .btn-action-delete {
@@ -323,8 +301,18 @@
     }
 
     /* ── Empty State ── */
-    .empty-state { text-align: center; padding: 4rem 2rem; }
-    .empty-state-icon { font-size: 2.5rem; color: var(--kapture-muted); margin-bottom: 1rem; opacity: 0.4; }
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+    }
+
+    .empty-state-icon {
+        font-size: 2.5rem;
+        color: var(--kapture-muted);
+        margin-bottom: 1rem;
+        opacity: 0.4;
+    }
+
     .empty-state-text {
         font-family: 'Cormorant Garamond', serif;
         font-size: 1.3rem;
@@ -353,7 +341,12 @@
         transition: all 0.2s;
         display: inline-block;
     }
-    .kap-page-btn:hover { border-color: var(--kapture-gold); color: var(--kapture-gold); text-decoration: none; }
+
+    .kap-page-btn:hover {
+        border-color: var(--kapture-gold);
+        color: var(--kapture-gold);
+        text-decoration: none;
+    }
 
     .kap-page-active {
         background: var(--kapture-gold);
@@ -379,8 +372,17 @@
         transition: all 0.2s;
         display: inline-block;
     }
-    .kap-nav-btn:hover { border-color: var(--kapture-gold); color: var(--kapture-gold); text-decoration: none; }
-    .kap-nav-disabled { opacity: 0.3; pointer-events: none; }
+
+    .kap-nav-btn:hover {
+        border-color: var(--kapture-gold);
+        color: var(--kapture-gold);
+        text-decoration: none;
+    }
+
+    .kap-nav-disabled {
+        opacity: 0.3;
+        pointer-events: none;
+    }
 </style>
 
 @include('layouts.flash-messages')
@@ -392,37 +394,22 @@
         <div class="page-eyebrow">
             <span>Inventory Management</span>
         </div>
-        <h1 class="page-title">Collection Items</h1>
-        <p class="page-subtitle">Fine Photographic Instruments — Catalogue</p>
+        <h1 class="page-title">Trash</h1>
+        <p class="page-subtitle">Deleted Items — Catalogue</p>
     </div>
 
     {{-- Toolbar --}}
     <div class="kapture-toolbar">
 
-        <a href="{{ route('items.create') }}" class="btn-kapture-primary">
-            <i class="bi bi-plus"></i> Add Item
+        <a href="{{ route('items.index') }}" class="btn-kapture-primary">
+            <i class="bi bi-arrow-left"></i> Back to Items
         </a>
 
-        <a href="{{ route('items.trash') }}" class="btn-kapture-secondary">
-            <i class="bi bi-trash"></i> Trash
-        </a>
-
-        <div class="toolbar-divider"></div>
-
-        <form action="{{ route('item.import') }}" method="POST" enctype="multipart/form-data"
-              class="d-inline-flex align-items-center gap-2">
-            @csrf
-            <input type="file" name="file" class="kapture-file-input form-control">
-            <button type="submit" class="btn-kapture-secondary">
-                <i class="bi bi-file-earmark-spreadsheet"></i> Import
-            </button>
-        </form>
-
-        <form method="GET" action="{{ route('items.index') }}" class="kapture-search-wrap">
+        <form method="GET" action="{{ route('items.trash') }}" class="kapture-search-wrap">
             <input type="text"
                    name="search"
                    value="{{ request('search') }}"
-                   placeholder="Search items..."
+                   placeholder="Search trash..."
                    class="kapture-search">
             <i class="bi bi-search search-icon"></i>
         </form>
@@ -439,7 +426,7 @@
                     <th>Item Name</th>
                     <th>Sell Price</th>
                     <th>Cost Price</th>
-                    <th>Qty</th>
+                    <th>Deleted</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -449,32 +436,39 @@
                     <td><span class="item-id">#{{ $item->item_id }}</span></td>
                     <td>
                         <img class="item-img"
-                             src="{{ $item->img_path === 'default.jpg'? asset('images/default.jpg'): asset('storage/' . $item->img_path) }}"
-                             alt="{{ $item->description }}">
+                             src="{{ $item->img_path === 'default.jpg' ? asset('images/default.jpg') : asset('storage/' . $item->img_path) }}"
+                             alt="{{ $item->title }}">
                     </td>
                     <td><span class="item-description">{{ $item->title }}</span></td>
                     <td><span class="item-price">₱ {{ number_format($item->sell_price, 2) }}</span></td>
                     <td><span class="item-price item-cost">₱ {{ number_format($item->cost_price, 2) }}</span></td>
                     <td>
-                        <span class="item-qty {{ ($item->quantity ?? 0) <= 5 ? 'qty-low' : '' }}">
-                            {{ $item->quantity ?? 0 }}
+                        <span class="deleted-date">
+                            {{ \Carbon\Carbon::parse($item->deleted_at)->format('M d, Y') }}
                         </span>
                     </td>
                     <td>
                         <div class="action-wrap">
-                            <a href="{{ route('items.edit', $item->item_id) }}" class="btn-action-edit">
-                                <i class="bi bi-pencil"></i>
-                            </a>
-                            <form action="{{ route('items.destroy', $item->item_id) }}"
-                                  method="POST"
-                                  class="d-inline"
-                                  onsubmit="return confirm('Remove this item from the collection?')">
+
+                            {{-- Restore --}}
+                            <form method="POST" action="{{ route('items.restore', $item->item_id) }}">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit" class="btn-action-restore" title="Restore">
+                                    <i class="bi bi-arrow-counterclockwise"></i>
+                                </button>
+                            </form>
+
+                            {{-- Permanently Delete --}}
+                            <form method="POST" action="{{ route('items.forceDelete', $item->item_id) }}"
+                                  onsubmit="return confirm('Permanently delete \'{{ addslashes($item->title) }}\'? This cannot be undone.')">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn-action-delete">
+                                <button type="submit" class="btn-action-delete" title="Delete Permanently">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </form>
+
                         </div>
                     </td>
                 </tr>
@@ -482,8 +476,8 @@
                 <tr>
                     <td colspan="7">
                         <div class="empty-state">
-                            <div class="empty-state-icon"><i class="bi bi-camera"></i></div>
-                            <p class="empty-state-text">No items found in the collection.</p>
+                            <div class="empty-state-icon"><i class="bi bi-trash"></i></div>
+                            <p class="empty-state-text">Trash is empty.</p>
                         </div>
                     </td>
                 </tr>
@@ -493,13 +487,12 @@
     </div>
 
     {{-- Pagination --}}
-    @if ($items->hasPages())
+    @if($items->hasPages())
     <div class="kapture-pagination">
 
-        {{-- Page numbers LEFT --}}
         <div class="d-flex align-items-center gap-1">
-            @foreach ($items->getUrlRange(1, $items->lastPage()) as $page => $url)
-                @if ($page == $items->currentPage())
+            @foreach($items->getUrlRange(1, $items->lastPage()) as $page => $url)
+                @if($page == $items->currentPage())
                     <span class="kap-page-active">{{ $page }}</span>
                 @else
                     <a href="{{ $url }}" class="kap-page-btn">{{ $page }}</a>
@@ -507,15 +500,14 @@
             @endforeach
         </div>
 
-        {{-- Prev / Next RIGHT --}}
         <div class="d-flex align-items-center gap-2 ms-auto">
-            @if ($items->onFirstPage())
+            @if($items->onFirstPage())
                 <span class="kap-nav-btn kap-nav-disabled">← Prev</span>
             @else
                 <a href="{{ $items->previousPageUrl() }}" class="kap-nav-btn">← Prev</a>
             @endif
 
-            @if ($items->hasMorePages())
+            @if($items->hasMorePages())
                 <a href="{{ $items->nextPageUrl() }}" class="kap-nav-btn">Next →</a>
             @else
                 <span class="kap-nav-btn kap-nav-disabled">Next →</span>
@@ -526,4 +518,5 @@
     @endif
 
 </div>
+
 @endsection
