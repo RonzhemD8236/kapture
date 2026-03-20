@@ -6,6 +6,7 @@ use App\Http\Controllers\ItemController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProfileSetupController;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -26,10 +27,12 @@ Route::prefix('customer')->middleware(['auth'])->group(function () {
     Route::get('/profile', [CustomerController::class, 'create'])->name('customer.profile');
     Route::post('/profile', [CustomerController::class, 'store'])->name('customer.store');
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::get('/profile/setup', [ProfileSetupController::class, 'show'])->name('customer.profile.setup');
+    Route::post('/profile/setup', [ProfileSetupController::class, 'store'])->name('customer.profile.setup.store');
 });
 
 // Admin Routes
-Route::prefix('admin')->middleware(['auth'])->group(function () {
+Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
     Route::get('/admin/dashboard/product-chart', [DashboardController::class, 'productChartData'])->name('dashboard.productChartData');
     Route::get('/users', [DashboardController::class, 'getUsers'])->name('admin.users');
