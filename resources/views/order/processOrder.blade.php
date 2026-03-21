@@ -36,12 +36,10 @@
     .kap-order-status-row { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 0.75rem; }
     .kap-order-status-label { font-size: 0.58rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--kapture-gold); }
     .kap-order-status-value { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; }
-    .status-completed  { color: #7cc47c; }
-    .status-processing { color: var(--kapture-gold); }
     .status-pending    { color: #a89bc2; }
-    .status-delivered  { color: #7cc47c; }
-    .status-canceled   { color: #c06060; }
-
+    .status-processing { color: var(--kapture-gold); }
+    .status-completed  { color: #7cc47c; }
+    .status-cancelled  { color: #c06060; }
     .kap-total-row { display: flex; justify-content: space-between; align-items: center; padding-top: 0.75rem; border-top: 1px solid var(--kapture-border); }
     .kap-total-label { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--kapture-gold); }
     .kap-total-value { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; color: #fff; }
@@ -137,11 +135,11 @@
                     <div class="kap-field">
                         <label class="kap-label">New Status</label>
                         <select name="status" class="kap-select">
-                            <option value="Processing" {{ $customer->status === 'Processing' ? 'selected' : '' }}>Processing</option>
-                            <option value="Delivered"  {{ $customer->status === 'Delivered'  ? 'selected' : '' }}>Delivered</option>
-                            <option value="Completed"  {{ $customer->status === 'Completed'  ? 'selected' : '' }}>Completed</option>
-                            <option value="Canceled"   {{ $customer->status === 'Canceled'   ? 'selected' : '' }}>Canceled</option>
-                        </select>
+                        <option value="pending"    {{ $customer->status === 'pending'    ? 'selected' : '' }}>Pending</option>
+                        <option value="processing" {{ $customer->status === 'processing' ? 'selected' : '' }}>Processing</option>
+                        <option value="completed"  {{ $customer->status === 'completed'  ? 'selected' : '' }}>Completed</option>
+                        <option value="cancelled"  {{ $customer->status === 'cancelled'  ? 'selected' : '' }}>Cancelled</option>
+                    </select>
                     </div>
 
                     <div class="kap-btn-row">
