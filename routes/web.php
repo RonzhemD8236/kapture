@@ -11,6 +11,8 @@ use App\Http\Controllers\AdminProfileController;
 use App\Http\Controllers\CheckoutController;
 use Illuminate\Support\Facades\Auth;
 
+Route::get('/', function () {return view('home'); })->name('home');
+Route::get('/about', function () { return view('about'); })->name('about');
 
 // Auth Routes
 Auth::routes(['verify' => true]);
@@ -26,37 +28,30 @@ Route::get('/home', function () {
     return redirect('/login');
 })->middleware('auth');
 
-Route::get('/', function () {return view('home'); })->name('home');
-
-Route::get('/about', function () { return view('about'); })->name('about');
-
-
 // Public Routes
 Route::get('/', [ItemController::class, 'getItems'])->name('getItems');
 Route::get('/add-to-cart/{id}', [ItemController::class, 'addToCart'])->name('addToCart');
 Route::get('/shopping-cart', [ItemController::class, 'getCart'])->name('getCart');
 Route::get('/reduce/{id}', [ItemController::class, 'getReduceByOne'])->name('reduceByOne');
 Route::get('/remove/{id}', [ItemController::class, 'getRemoveItem'])->name('removeItem');
-Route::get('/product/{id}', [ItemController::class, 'show'])->name('product.show');
 
 Route::prefix('customer')->middleware(['auth'])->group(function () {
-<<<<<<< Updated upstream
     Route::get('/profile/setup', [ProfileSetupController::class, 'show'])->name('customer.profile.setup');
     Route::post('/profile/setup', [ProfileSetupController::class, 'store'])->name('customer.profile.setup.store');
-});
+    });
+
+Route::get('/product/{id}', [ItemController::class, 'show'])->name('product.show');
 
 // Customer Routes
 Route::prefix('customer')->middleware(['auth', 'verified'])->group(function () {
-    Route::get('/checkout', [ItemController::class, 'postCheckout'])->name('checkout');
-=======
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
     Route::post('/checkout/place', [CheckoutController::class, 'store'])->name('checkout.place');
 
->>>>>>> Stashed changes
     Route::get('/logout', [CustomerController::class, 'logout'])->name('user.logout');
     Route::get('/profile', [CustomerController::class, 'create'])->name('customer.profile');
     Route::post('/profile', [CustomerController::class, 'store'])->name('customer.store');
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
     Route::get('/profile/edit', [ProfileSetupController::class, 'edit'])->name('customer.profile.edit');
     Route::put('/profile/edit', [ProfileSetupController::class, 'update'])->name('customer.profile.update');
 });
