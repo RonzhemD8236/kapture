@@ -136,7 +136,7 @@
 <body>
 
 <nav class="kapture-nav">
-    <a href="{{ route('getItems') }}" class="nav-logo">KAPTURE</a>
+    <a href="{{ route('home') }}" class="nav-logo">KAPTURE</a>
 
     <ul class="nav-links">
         <li><a href="{{ route('getItems') }}">SHOP</a></li>

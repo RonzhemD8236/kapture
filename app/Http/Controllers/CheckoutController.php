@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class CheckoutController extends Controller
 {
@@ -96,16 +97,71 @@ class CheckoutController extends Controller
                 ->decrement('quantity', $item['quantity']);
         }
 
+        $customer = DB::table('customer')->where('id', $customerId)->first();
+
+        $order = (object)[
+            'order_id'       => $orderId,
+            'status'         => 'pending',
+            'payment_method' => 'Cash on Delivery',
+            'created_at'     => now(),
+            'address'        => $request->addressline . ', ' . $request->town . ', ' . $request->zipcode,
+        ];
+
         // Send confirmation email
         Mail::to(Auth::user()->email)
             ->send(new OrderConfirmation(
-                (object)['order_id' => $orderId],
+                $order,
                 $cart,
-                $total
+                $total,
+                $customer
             ));
 
         session()->forget('cart');
 
         return redirect()->route('home')->with('success', 'Order #' . $orderId . ' placed successfully!');
+    }
+
+        public function downloadReceipt($id)
+    {
+        // Make sure the order belongs to this customer
+        $customer = DB::table('customer')->where('user_id', Auth::id())->first();
+        
+        $order = DB::table('orders')
+            ->where('order_id', $id)
+            ->where('customer_id', $customer->id)
+            ->first();
+
+        abort_if(!$order, 403);
+
+        $cart = DB::table('order_items')
+            ->join('item', 'order_items.item_id', '=', 'item.item_id')
+            ->where('order_items.order_id', $id)
+            ->select(
+                'item.title',
+                'order_items.quantity',
+                'order_items.price as sell_price',
+                'order_items.subtotal'
+            )
+            ->get()
+            ->map(fn($i) => (array) $i)
+            ->toArray();
+
+        $total = collect($cart)->sum('subtotal');
+
+        $orderObj = (object)[
+            'order_id'       => $order->order_id,
+            'status'         => $order->status,
+            'payment_method' => 'Cash on Delivery',
+            'created_at'     => $order->created_at,
+        ];
+
+        $pdf = Pdf::loadView('email.receipt-pdf', [
+            'order'    => $orderObj,
+            'cart'     => $cart,
+            'total'    => $total,
+            'customer' => $customer,
+        ]);
+
+        return $pdf->download('receipt-' . $id . '.pdf');
     }
 }
