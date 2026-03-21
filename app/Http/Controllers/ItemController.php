@@ -380,4 +380,20 @@ public function postCheckout()
         Excel::import(new ItemsImport, $request->file('file'));
         return redirect()->route('items.index')->with('success', 'Items imported successfully.');
     }
+
+        public function home(Request $request)
+    {
+        $query = DB::table('item')->whereNull('deleted_at');
+
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('title', 'LIKE', '%' . $request->search . '%')
+                ->orWhere('description', 'LIKE', '%' . $request->search . '%')
+                ->orWhere('category', 'LIKE', '%' . $request->search . '%');
+            });
+        }
+
+        $items = $query->paginate(6)->withQueryString();
+        return view('home', compact('items'));
+    }
 }

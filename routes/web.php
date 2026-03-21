@@ -12,7 +12,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ReviewController;
 use Illuminate\Support\Facades\Auth;
 
-Route::get('/', function () {return view('home'); })->name('home');
+Route::get('/', [ItemController::class, 'home'])->name('home');
 Route::get('/about', function () { return view('about'); })->name('about');
 
 
