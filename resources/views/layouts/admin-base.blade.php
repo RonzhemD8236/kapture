@@ -317,6 +317,12 @@
                         Items
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('admin.reviews.index') }}"
+                    class="{{ request()->routeIs('admin.reviews*') ? 'active' : '' }}">
+                        Reviews
+                    </a>
+                </li>
             </ul>
         </div>
 
