@@ -332,7 +332,7 @@
             <ul class="dropdown-menu kapture-dropdown dropdown-menu-end">
                 <li><h6 class="dropdown-header">Admin Panel</h6></li>
                 <li>
-                    <a class="dropdown-item" href="{{ route('dashboard.index') }}">
+                    <a class="dropdown-item" href="{{ route('admin.profile') }}">
                         <i class="bi bi-person"></i> Profile
                     </a>
                 </li>

@@ -14,29 +14,33 @@ class UsersDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
+            ->addColumn('status', function ($row) {
+                $active = $row->is_active ?? true;
+                $label  = $active ? 'Active' : 'Inactive';
+                $class  = $active ? 'status-active' : 'status-inactive';
+                return '<span class="user-status ' . $class . '">' . $label . '</span>';
+            })
             ->addColumn('action', function ($row) {
+                if ((int)$row->id === (int)auth()->id()) {
+                    return '<div class="action-wrap">—</div>';
+                }
+
                 return '
                     <div class="action-wrap">
-                        <a href="' . route('users.edit', $row->id) . '" class="btn-action-edit">
+                        <a href="' . route('users.edit', $row->id) . '" class="btn-action-edit" title="Edit">
                             <i class="bi bi-pencil"></i>
                         </a>
-                        <a href="#" class="btn-action-delete"
+                        <a href="#" class="btn-action-delete" title="Delete"
                             onclick="event.preventDefault(); if(confirm(\'Delete this user?\')) { document.getElementById(\'delete-' . $row->id . '\').submit(); }">
                             <i class="bi bi-trash"></i>
                         </a>
                         <form id="delete-' . $row->id . '" action="' . route('users.destroy', $row->id) . '" method="POST" style="display:none;">
-                            ' . csrf_field() . '
-                            ' . method_field('DELETE') . '
+                            ' . csrf_field() . method_field('DELETE') . '
                         </form>
                     </div>
                 ';
             })
-            ->addColumn('status', function ($row) {
-                return $row->is_active
-                    ? '<span class="kap-badge kap-badge-active">Active</span>'
-                    : '<span class="kap-badge kap-badge-inactive">Inactive</span>';
-            })
-            ->rawColumns(['action', 'status'])
+            ->rawColumns(['status', 'action'])
             ->setRowId('id');
     }
 
@@ -66,15 +70,11 @@ class UsersDataTable extends DataTable
             Column::make('id'),
             Column::make('name'),
             Column::make('email'),
-            Column::make('role'),
-            Column::computed('status')
-                ->exportable(false)
-                ->printable(false),
-            Column::make('created_at'),
+            Column::make('status')->title('Status'),
+            Column::make('created_at')->title('Created At'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)
-                ->width(60)
                 ->addClass('text-center'),
         ];
     }

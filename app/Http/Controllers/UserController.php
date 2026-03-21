@@ -86,4 +86,45 @@ class UserController extends Controller
         return redirect()->route('admin.users')
             ->with('success', 'User deleted successfully.');
     }
+
+    /**
+     * Toggle user active/inactive status
+     */
+    public function toggleStatus($id)
+    {
+        $user = DB::table('users')->where('id', $id)->first();
+
+        if (!$user) {
+            return redirect()->route('admin.users')
+                ->with('error', 'User not found.');
+        }
+
+        DB::table('users')->where('id', $id)->update([
+            'is_active'  => !$user->is_active,
+            'updated_at' => now(),
+        ]);
+
+        $status = !$user->is_active ? 'activated' : 'deactivated';
+
+        return redirect()->route('admin.users')
+            ->with('success', "User {$status} successfully.");
+    }
+
+    /**
+     * Update role only
+     */
+    public function updateRole(Request $request, $id)
+    {
+        $request->validate([
+            'role' => 'required|in:customer,admin',
+        ]);
+
+        DB::table('users')->where('id', $id)->update([
+            'role'       => $request->role,
+            'updated_at' => now(),
+        ]);
+
+        return redirect()->route('admin.users')
+            ->with('success', 'User role updated successfully.');
+    }
 }

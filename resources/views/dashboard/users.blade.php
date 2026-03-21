@@ -133,6 +133,18 @@
         pointer-events: none;
     }
 
+    /* ── Status pill ── */
+    .user-status {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 0.72rem;
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+
+    .status-active   { color: #78c896; }
+    .status-inactive { color: #c06060; }
+
     /* ── Action Buttons ── */
     .action-wrap {
         display: flex;
@@ -141,6 +153,45 @@
     }
 
     .btn-action-edit,
+    /* Toggle button */
+    .btn-action-toggle {
+        width: 34px;
+        height: 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        background: transparent;
+        text-decoration: none;
+        transition: all 0.2s;
+        cursor: pointer;
+        border: 1px solid var(--kapture-border-subtle);
+    }
+
+    .btn-action-toggle-on {
+        color: #78c896;
+        border-color: rgba(120, 200, 150, 0.3);
+    }
+
+    .btn-action-toggle-on:hover {
+        background: rgba(120, 200, 150, 0.1);
+        border-color: #78c896;
+        text-decoration: none;
+        color: #78c896;
+    }
+
+    .btn-action-toggle-off {
+        color: #c06060;
+        border-color: rgba(192, 96, 96, 0.3);
+    }
+
+    .btn-action-toggle-off:hover {
+        background: rgba(192, 96, 96, 0.1);
+        border-color: #c06060;
+        text-decoration: none;
+        color: #c06060;
+    }
+
     .btn-action-delete {
         width: 34px;
         height: 34px;
@@ -166,6 +217,45 @@
         text-decoration: none;
     }
 
+    /* Toggle button */
+    .btn-action-toggle {
+        width: 34px;
+        height: 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        background: transparent;
+        text-decoration: none;
+        transition: all 0.2s;
+        cursor: pointer;
+        border: 1px solid var(--kapture-border-subtle);
+    }
+
+    .btn-action-toggle-on {
+        color: #78c896;
+        border-color: rgba(120, 200, 150, 0.3);
+    }
+
+    .btn-action-toggle-on:hover {
+        background: rgba(120, 200, 150, 0.1);
+        border-color: #78c896;
+        text-decoration: none;
+        color: #78c896;
+    }
+
+    .btn-action-toggle-off {
+        color: #c06060;
+        border-color: rgba(192, 96, 96, 0.3);
+    }
+
+    .btn-action-toggle-off:hover {
+        background: rgba(192, 96, 96, 0.1);
+        border-color: #c06060;
+        text-decoration: none;
+        color: #c06060;
+    }
+
     .btn-action-delete {
         border: 1px solid rgba(192, 96, 96, 0.3);
         color: #c06060;
@@ -175,6 +265,38 @@
         border-color: #c06060;
         background: rgba(192, 96, 96, 0.1);
         color: #e08080;
+    }
+
+    /* Toggle button styles */
+    .btn-action-toggle-on,
+    .btn-action-toggle-off {
+        width: 34px;
+        height: 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        background: transparent;
+        text-decoration: none;
+        transition: all 0.2s;
+        cursor: pointer;
+        border: none;
+    }
+
+    .btn-action-toggle-on {
+        color: #6dc87a;
+    }
+
+    .btn-action-toggle-on:hover {
+        color: #8de89a;
+    }
+
+    .btn-action-toggle-off {
+        color: var(--kapture-muted);
+    }
+
+    .btn-action-toggle-off:hover {
+        color: var(--kapture-text);
     }
 
     /* ── Table wrap ── */

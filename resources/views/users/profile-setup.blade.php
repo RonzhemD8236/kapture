@@ -198,7 +198,7 @@
 
                     <div class="field">
                         <label for="fname">First Name</label>
-                        <input id="fname" type="text" name="fname" value="{{ old('fname') }}"
+                        <input id="fname" type="text" name="fname" value="{{ old('fname', Auth::user()->fname) }}"
                             placeholder="First name" required
                             class="{{ $errors->has('fname') ? 'is-invalid' : '' }}">
                         @error('fname')<span class="invalid-feedback">{{ $message }}</span>@enderror
@@ -206,7 +206,7 @@
 
                     <div class="field">
                         <label for="lname">Last Name</label>
-                        <input id="lname" type="text" name="lname" value="{{ old('lname') }}"
+                        <input id="lname" type="text" name="lname" value="{{ old('lname', Auth::user()->lname) }}"
                             placeholder="Last name" required
                             class="{{ $errors->has('lname') ? 'is-invalid' : '' }}">
                         @error('lname')<span class="invalid-feedback">{{ $message }}</span>@enderror

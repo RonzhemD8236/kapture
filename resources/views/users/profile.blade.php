@@ -4,7 +4,7 @@
     @parent
     <style>
         :root {
-            --black: #07070d; --panel: #0d0b1c;
+            --black: #07070d; --panel: #0d0b1c; --panel2: #110f20;
             --gold: #c9a84c; --gold-lt: #e8c97a;
             --text: #d4cfe0; --muted: #6b6480;
             --subtle: rgba(168,155,194,0.1);
@@ -16,146 +16,139 @@
             background:
                 radial-gradient(ellipse 50% 40% at 80% 20%, rgba(80,40,140,0.12) 0%, transparent 60%),
                 var(--black);
-            padding: 3rem 2rem;
+            padding: 2.5rem 2rem;
             font-family: 'Montserrat', sans-serif;
         }
 
-        .profile-wrap {
-            max-width: 860px;
-            margin: 0 auto;
+        .profile-wrap { max-width: 900px; margin: 0 auto; }
+
+        .flash {
+            background: rgba(201,168,76,0.07);
+            border: 1px solid rgba(201,168,76,0.25);
+            color: var(--gold);
+            font-size: 0.62rem; letter-spacing: 0.08em;
+            padding: 0.75rem 1rem; margin-bottom: 1.5rem;
         }
 
-        /* Header */
-        .profile-header {
-            display: flex;
-            align-items: center;
-            gap: 1.75rem;
-            padding-bottom: 2rem;
-            margin-bottom: 2rem;
+        /* Hero */
+        .profile-hero {
+            display: flex; align-items: center; gap: 1.75rem;
+            padding-bottom: 2rem; margin-bottom: 2rem;
             border-bottom: 1px solid var(--border);
         }
 
         .profile-avatar {
-            width: 90px; height: 90px;
-            border-radius: 50%;
+            width: 88px; height: 88px; border-radius: 50%;
             border: 2px solid rgba(201,168,76,0.3);
-            overflow: hidden;
-            flex-shrink: 0;
+            overflow: hidden; flex-shrink: 0;
             background: rgba(255,255,255,0.03);
             display: flex; align-items: center; justify-content: center;
             color: var(--muted); font-size: 2rem;
         }
+        .profile-avatar img { width:100%; height:100%; object-fit:cover; }
 
-        .profile-avatar img {
-            width: 100%; height: 100%; object-fit: cover;
-        }
-
-        .profile-info h1 {
+        .profile-hero-info { flex: 1; }
+        .profile-hero-info h1 {
             font-family: 'Cormorant Garamond', serif;
             font-size: 2rem; font-weight: 300;
-            color: #fff; margin: 0 0 0.25rem;
-            line-height: 1;
+            color: #fff; margin: 0 0 0.2rem; line-height: 1;
         }
-
-        .profile-info p {
-            font-size: 0.62rem; color: var(--muted);
-            letter-spacing: 0.08em; margin: 0;
-        }
+        .hero-email { font-size: 0.62rem; color: var(--muted); letter-spacing: 0.06em; margin-bottom: 0.5rem; }
 
         .profile-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.35rem;
-            font-size: 0.5rem;
-            font-weight: 600;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: var(--gold);
-            border: 1px solid rgba(201,168,76,0.25);
-            padding: 0.2rem 0.6rem;
-            margin-top: 0.5rem;
+            display: inline-flex; align-items: center; gap: 0.35rem;
+            font-size: 0.5rem; font-weight: 600;
+            letter-spacing: 0.2em; text-transform: uppercase;
+            color: var(--gold); border: 1px solid rgba(201,168,76,0.25);
+            padding: 0.2rem 0.65rem;
         }
+
+        .btn-edit-profile {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.55rem; font-weight: 600;
+            letter-spacing: 0.18em; text-transform: uppercase;
+            background: transparent; border: 1px solid var(--subtle);
+            color: var(--muted); padding: 0.55rem 1.1rem;
+            text-decoration: none; transition: all 0.2s;
+        }
+        .btn-edit-profile:hover { border-color: var(--gold); color: var(--gold); }
 
         /* Cards */
         .profile-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 1rem; margin-bottom: 1rem;
         }
 
         .profile-card {
             border: 1px solid var(--subtle);
             background: rgba(255,255,255,0.01);
-            padding: 1.5rem;
+            padding: 1.4rem 1.5rem;
         }
 
-        .profile-card-title {
-            font-size: 0.52rem;
-            font-weight: 600;
-            letter-spacing: 0.22em;
-            text-transform: uppercase;
-            color: var(--gold);
-            margin-bottom: 1.25rem;
+        .card-title {
+            font-size: 0.5rem; font-weight: 600;
+            letter-spacing: 0.25em; text-transform: uppercase;
+            color: var(--gold); margin-bottom: 1.1rem;
             padding-bottom: 0.6rem;
             border-bottom: 1px solid var(--subtle);
         }
 
-        .profile-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem 0;
+        .info-row {
+            display: flex; justify-content: space-between; align-items: flex-start;
+            padding: 0.45rem 0;
             border-bottom: 1px solid rgba(168,155,194,0.05);
         }
+        .info-row:last-child { border-bottom: none; }
 
-        .profile-row:last-child { border-bottom: none; }
-
-        .profile-row-label {
-            font-size: 0.55rem;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--muted);
+        .info-label {
+            font-size: 0.52rem; letter-spacing: 0.12em;
+            text-transform: uppercase; color: var(--muted);
+            flex-shrink: 0; margin-right: 1rem;
         }
 
-        .profile-row-val {
-            font-size: 0.7rem;
-            color: var(--text);
-            text-align: right;
+        .info-val { font-size: 0.68rem; color: var(--text); text-align: right; }
+        .info-val.empty { color: var(--muted); font-style: italic; font-size: 0.62rem; }
+
+        /* Account settings full-width */
+        .profile-card-full {
+            border: 1px solid var(--subtle);
+            background: rgba(255,255,255,0.01);
+            padding: 1.4rem 1.5rem;
+            margin-bottom: 1rem;
         }
 
-        /* Buttons */
+        .status-pill {
+            font-size: 0.48rem; font-weight: 600;
+            letter-spacing: 0.15em; text-transform: uppercase;
+            padding: 0.2rem 0.55rem;
+        }
+        .pill-complete  { background: rgba(80,180,100,0.1);  color: #6dc87a; }
+        .pill-cancelled { background: rgba(220,80,80,0.1);   color: #e07070; }
+
+        /* Actions */
         .profile-actions {
-            display: flex;
-            gap: 0.75rem;
-            margin-top: 2rem;
+            display: flex; gap: 0.75rem; margin-top: 1.5rem; flex-wrap: wrap;
         }
 
         .btn-kap {
             font-family: 'Montserrat', sans-serif;
-            font-size: 0.55rem;
-            font-weight: 600;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            padding: 0.7rem 1.5rem;
-            text-decoration: none;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: none;
+            font-size: 0.55rem; font-weight: 600;
+            letter-spacing: 0.2em; text-transform: uppercase;
+            padding: 0.7rem 1.5rem; text-decoration: none;
+            cursor: pointer; transition: all 0.2s; border: none;
+            display: inline-flex; align-items: center; gap: 0.4rem;
         }
-
         .btn-kap-primary { background: #5a3d8a; color: #fff; }
         .btn-kap-primary:hover { background: #6b4aa0; color: #fff; }
-
-        .btn-kap-outline {
-            background: transparent;
-            border: 1px solid var(--subtle);
-            color: var(--muted);
-        }
+        .btn-kap-gold { background: transparent; border: 1px solid var(--border); color: var(--gold); }
+        .btn-kap-gold:hover { background: rgba(201,168,76,0.07); }
+        .btn-kap-outline { background: transparent; border: 1px solid var(--subtle); color: var(--muted); }
         .btn-kap-outline:hover { border-color: var(--gold); color: var(--gold); }
 
-        @media (max-width: 640px) {
+        @media (max-width: 680px) {
             .profile-grid { grid-template-columns: 1fr; }
-            .profile-header { flex-direction: column; text-align: center; }
+            .profile-hero { flex-direction: column; text-align: center; }
         }
     </style>
 @endsection
@@ -164,91 +157,114 @@
 <div class="profile-page">
     <div class="profile-wrap">
 
-        {{-- Flash messages --}}
         @if(session('success'))
-            <div style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.25);color:var(--gold);font-size:0.65rem;letter-spacing:0.08em;padding:0.75rem 1rem;margin-bottom:1.5rem;">
-                {{ session('success') }}
-            </div>
+            <div class="flash">{{ session('success') }}</div>
         @endif
 
-        {{-- Profile Header --}}
-        <div class="profile-header">
+        @php $customer = DB::table('customer')->where('id', Auth::id())->first(); @endphp
+
+        {{-- Hero --}}
+        <div class="profile-hero">
             <div class="profile-avatar">
                 @if(Auth::user()->profile_photo && Auth::user()->profile_photo !== 'default.jpg')
-                    <img src="{{ asset('storage/' . Auth::user()->profile_photo) }}" alt="{{ Auth::user()->name }}">
+                    <img src="{{ asset('storage/' . Auth::user()->profile_photo) }}" alt="">
                 @else
                     <i class="fa-regular fa-user"></i>
                 @endif
             </div>
-            <div class="profile-info">
+
+            <div class="profile-hero-info">
                 <h1>{{ Auth::user()->name }}</h1>
-                <p>{{ Auth::user()->email }}</p>
+                <p class="hero-email">{{ Auth::user()->email }}</p>
                 <span class="profile-badge">
                     <i class="fa-regular fa-circle-check"></i>
                     {{ ucfirst(Auth::user()->role ?? 'Customer') }} Account
                 </span>
             </div>
+
+            <a href="{{ route('customer.profile.edit') }}" class="btn-edit-profile">
+                <i class="fa-regular fa-pen-to-square"></i> Edit Profile
+            </a>
         </div>
 
         {{-- Info Cards --}}
         <div class="profile-grid">
 
             <div class="profile-card">
-                <p class="profile-card-title">Account Details</p>
-                <div class="profile-row">
-                    <span class="profile-row-label">Full Name</span>
-                    <span class="profile-row-val">{{ Auth::user()->name }}</span>
+                <div class="card-title">Personal Information</div>
+                <div class="info-row">
+                    <span class="info-label">First Name</span>
+                    <span class="info-val {{ $customer ? '' : 'empty' }}">{{ $customer->fname ?? '—' }}</span>
                 </div>
-                <div class="profile-row">
-                    <span class="profile-row-label">Email</span>
-                    <span class="profile-row-val">{{ Auth::user()->email }}</span>
+                <div class="info-row">
+                    <span class="info-label">Last Name</span>
+                    <span class="info-val {{ $customer ? '' : 'empty' }}">{{ $customer->lname ?? '—' }}</span>
                 </div>
-                <div class="profile-row">
-                    <span class="profile-row-label">Member Since</span>
-                    <span class="profile-row-val">{{ Auth::user()->created_at->format('M d, Y') }}</span>
+                <div class="info-row">
+                    <span class="info-label">Phone</span>
+                    <span class="info-val {{ $customer?->phone ? '' : 'empty' }}">{{ $customer->phone ?? 'Not set' }}</span>
                 </div>
-                <div class="profile-row">
-                    <span class="profile-row-label">Role</span>
-                    <span class="profile-row-val">{{ ucfirst(Auth::user()->role ?? 'Customer') }}</span>
+                <div class="info-row">
+                    <span class="info-label">Member Since</span>
+                    <span class="info-val">{{ Auth::user()->created_at->format('M d, Y') }}</span>
                 </div>
             </div>
 
             <div class="profile-card">
-                <p class="profile-card-title">Order Summary</p>
-                <div class="profile-row">
-                    <span class="profile-row-label">Total Orders</span>
-                    <span class="profile-row-val">
-                        {{ DB::table('orders')->where('customer_id', Auth::user()->id)->count() }}
-                    </span>
+                <div class="card-title">Shipping Address</div>
+                <div class="info-row">
+                    <span class="info-label">Street</span>
+                    <span class="info-val {{ $customer?->addressline ? '' : 'empty' }}">{{ $customer->addressline ?? 'Not set' }}</span>
                 </div>
-                <div class="profile-row">
-                    <span class="profile-row-label">Pending</span>
-                    <span class="profile-row-val">
-                        {{ DB::table('orders')->where('customer_id', Auth::user()->id)->where('status','pending')->count() }}
-                    </span>
+                <div class="info-row">
+                    <span class="info-label">City / Town</span>
+                    <span class="info-val {{ $customer?->town ? '' : 'empty' }}">{{ $customer->town ?? 'Not set' }}</span>
                 </div>
-                <div class="profile-row">
-                    <span class="profile-row-label">Completed</span>
-                    <span class="profile-row-val">
-                        {{ DB::table('orders')->where('customer_id', Auth::user()->id)->where('status','completed')->count() }}
-                    </span>
+                <div class="info-row">
+                    <span class="info-label">Zip Code</span>
+                    <span class="info-val {{ $customer?->zipcode ? '' : 'empty' }}">{{ $customer->zipcode ?? 'Not set' }}</span>
                 </div>
-                <div class="profile-row">
-                    <span class="profile-row-label">Total Spent</span>
-                    <span class="profile-row-val">
-                        ₱{{ number_format(DB::table('orders as o')->join('order_items as oi','o.order_id','=','oi.order_id')->where('o.customer_id', Auth::user()->id)->sum('oi.subtotal'), 2) }}
-                    </span>
+                <div class="info-row">
+                    <span class="info-label">Country</span>
+                    <span class="info-val">Philippines</span>
                 </div>
             </div>
 
         </div>
 
+        {{-- Account Settings --}}
+        <div class="profile-card-full">
+            <div class="card-title">Account Settings</div>
+            <div class="info-row">
+                <span class="info-label">Email Address</span>
+                <span class="info-val">{{ Auth::user()->email }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Account Status</span>
+                <span class="info-val">
+                    @if(Auth::user()->is_active)
+                        <span class="status-pill pill-complete">Active</span>
+                    @else
+                        <span class="status-pill pill-cancelled">Inactive</span>
+                    @endif
+                </span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Role</span>
+                <span class="info-val">{{ ucfirst(Auth::user()->role ?? 'Customer') }}</span>
+            </div>
+        </div>
+
         {{-- Actions --}}
         <div class="profile-actions">
-            <a href="{{ route('home') }}" class="btn-kap btn-kap-primary">Browse Shop</a>
+            <a href="{{ route('home') }}" class="btn-kap btn-kap-primary">
+                <i class="fa-regular fa-shop"></i> Browse Shop
+            </a>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button type="submit" class="btn-kap btn-kap-outline">Sign Out</button>
+                <button type="submit" class="btn-kap btn-kap-outline">
+                    <i class="fa-regular fa-arrow-right-from-bracket"></i> Sign Out
+                </button>
             </form>
         </div>
 

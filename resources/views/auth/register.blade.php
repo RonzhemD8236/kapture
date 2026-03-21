@@ -112,9 +112,25 @@
                 @csrf
 
                 <div class="rc-field">
+                    <label for="fname">First Name</label>
+                    <input id="fname" type="text" name="fname" value="{{ old('fname') }}"
+                        placeholder="First name" required autofocus
+                        class="{{ $errors->has('fname') ? 'is-invalid' : '' }}">
+                    @error('fname')<span class="invalid-feedback">{{ $message }}</span>@enderror
+                </div>
+
+                <div class="rc-field">
+                    <label for="lname">Last Name</label>
+                    <input id="lname" type="text" name="lname" value="{{ old('lname') }}"
+                        placeholder="Last name" required
+                        class="{{ $errors->has('lname') ? 'is-invalid' : '' }}">
+                    @error('lname')<span class="invalid-feedback">{{ $message }}</span>@enderror
+                </div>
+
+                <div class="rc-field">
                     <label for="email">Email Address</label>
                     <input id="email" type="email" name="email" value="{{ old('email') }}"
-                        placeholder="your@email.com" required autocomplete="email" autofocus
+                        placeholder="your@email.com" required autocomplete="email"
                         class="{{ $errors->has('email') ? 'is-invalid' : '' }}">
                     @error('email')<span class="invalid-feedback">{{ $message }}</span>@enderror
                 </div>
