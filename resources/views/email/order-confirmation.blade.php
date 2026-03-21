@@ -50,6 +50,15 @@
         </tbody>
       </table>
       <p>Your order will be processed within 1–2 business days.</p>
+
+      {{-- DOWNLOAD RECEIPT BUTTON --}}
+      <div style="text-align:center; margin:32px 0;">
+        <a href="{{ url('/customer/receipt/' . $order->order_id) }}" 
+           style="font-family:Georgia,serif; font-size:10px; letter-spacing:4px; color:#c9a84c; border:1px solid #c9a84c; padding:14px 32px; text-decoration:none; background:#04030a; display:inline-block;">
+          DOWNLOAD RECEIPT
+        </a>
+      </div>
+
     </div>
     <div class="footer">
       <p>© {{ date('Y') }} KAPTURE ATELIER — BGC, MANILA</p>

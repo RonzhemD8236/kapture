@@ -15,7 +15,9 @@ use Illuminate\Support\Facades\Auth;
 Route::get('/', [ItemController::class, 'home'])->name('home');
 Route::get('/about', function () { return view('about'); })->name('about');
 
-
+Route::get('/customer/receipt/{id}', [CheckoutController::class, 'downloadReceipt'])
+    ->name('customer.receipt')
+    ->middleware(['auth', 'verified']);
 
 // Auth Routes
 Auth::routes(['verify' => true, 'logout' => false]);
