@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -14,48 +13,40 @@ class SendOrderStatus extends Mailable
 {
     use Queueable, SerializesModels;
 
-    /**
-     * Create a new message instance.
-     */
     public $order;
-    public function __construct($order)
+    public $orderItems;
+    public $orderTotal;
+    public $customer;
+
+    public function __construct($order, $orderItems, $orderTotal, $customer)
     {
-        $this->order = $order;
+        $this->order      = $order;
+        $this->orderItems = $orderItems;
+        $this->orderTotal = $orderTotal;
+        $this->customer   = $customer;
     }
 
-    /**
-     * Get the message envelope.
-     */
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address('noreply@larashop.test', 'my shop'),
-            subject: 'Send Order Status',
+            from: new Address('noreply@larashop.test', 'Kapture'),
+            subject: 'Your Kapture Order Status Update',
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
     public function content(): Content
     {
-        $total = number_format($this->order->map(function ($item) {
-            return $item->quantity * $item->sell_price;
-        })->sum(), 2);
         return new Content(
             view: 'email.order_status',
             with: [
-                'order' => $this->order,
-                'orderTotal' => $total,
+                'order'      => $this->order,
+                'orderItems' => $this->orderItems,
+                'orderTotal' => $this->orderTotal,
+                'customer'   => $this->customer,
             ]
         );
     }
 
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
     public function attachments(): array
     {
         return [];
