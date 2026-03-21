@@ -8,6 +8,12 @@
     --gold:#c9a84c; --gold-light:#e6c87a; --white:#ede8f5;
     --silver:#b8aece; --muted:#6b5f7c;
   }
+  .star-rating { display:flex; flex-direction:row-reverse; gap:4px; width:fit-content; }
+  .star-rating input { display:none; }
+  .star-rating label { font-size:28px; color:var(--muted); cursor:pointer; transition:color .2s; }
+  .star-rating input:checked ~ label,
+  .star-rating label:hover,
+  .star-rating label:hover ~ label { color:var(--gold); }
   .page-wrap { padding-top:80px; min-height:100vh; }
   .breadcrumb { padding:20px 80px; font-size:9px; letter-spacing:2px; color:var(--muted); display:flex; gap:10px; align-items:center; border-bottom:1px solid rgba(91,26,138,.1); }
   .breadcrumb a { color:var(--muted); text-decoration:none; }
@@ -193,25 +199,92 @@
           <p class="desc-text">{{ $item->description }}</p>
         </div>
 
-        {{-- REVIEWS --}}
         <div class="tab-content" id="tab-reviews">
-          @if(isset($reviews) && count($reviews) > 0)
-            @foreach($reviews as $review)
-              <div class="review-item">
-                <div class="review-header">
-                  <span class="reviewer">{{ strtoupper($review->user_name ?? 'ANONYMOUS') }}</span>
-                  <span class="review-date">{{ \Carbon\Carbon::parse($review->created_at)->format('F Y') }}</span>
-                </div>
-                <div class="review-stars">
-                  @for($i = 1; $i <= 5; $i++){{ $i <= $review->rating ? '★' : '☆' }}@endfor
-                </div>
-                <p class="review-text">{{ $review->comment }}</p>
+
+  @if(session('success'))
+    <div style="padding:12px 16px;margin-bottom:20px;border:1px solid rgba(52,211,153,.3);color:#34d399;background:rgba(52,211,153,.08);font-size:11px;letter-spacing:1px;">
+      {{ session('success') }}
+    </div>
+  @endif
+  @if(session('error'))
+    <div style="padding:12px 16px;margin-bottom:20px;border:1px solid rgba(239,68,68,.3);color:#ef4444;background:rgba(239,68,68,.08);font-size:11px;letter-spacing:1px;">
+      {{ session('error') }}
+    </div>
+  @endif
+
+      {{-- WRITE A REVIEW --}}
+      @if($canReview)
+        <div style="margin-bottom:36px;padding:28px;border:1px solid rgba(91,26,138,.2);background:rgba(18,8,32,.5);">
+          <div style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:3px;color:var(--gold);margin-bottom:20px;">WRITE A REVIEW</div>
+          <form action="{{ route('review.store') }}" method="POST">
+            @csrf
+            <input type="hidden" name="item_id" value="{{ $item->item_id }}">
+            <input type="hidden" name="order_id" value="{{ $eligibleOrderId }}">
+            <div style="margin-bottom:16px;">
+              <div style="font-size:9px;letter-spacing:3px;color:var(--muted);margin-bottom:10px;font-family:'Cinzel',serif;">RATING</div>
+              <div class="star-rating">
+                @for($i = 5; $i >= 1; $i--)
+                  <input type="radio" name="rating" id="star{{ $i }}" value="{{ $i }}" required>
+                  <label for="star{{ $i }}">★</label>
+                @endfor
               </div>
-            @endforeach
-          @else
-            <p class="no-reviews">NO REVIEWS YET — BE THE FIRST TO REVIEW THIS PRODUCT.</p>
-          @endif
+            </div>
+            <div style="margin-bottom:20px;">
+              <div style="font-size:9px;letter-spacing:3px;color:var(--muted);margin-bottom:10px;font-family:'Cinzel',serif;">YOUR REVIEW</div>
+              <textarea name="comment" rows="4" placeholder="Share your experience..."
+                style="width:100%;background:rgba(18,8,32,.8);border:1px solid rgba(91,26,138,.3);color:var(--white);padding:14px 16px;font-family:'Montserrat',sans-serif;font-size:12px;outline:none;resize:vertical;box-sizing:border-box;"></textarea>
+            </div>
+            <button type="submit" style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:4px;color:var(--white);padding:14px 36px;border:1px solid rgba(147,51,234,.5);background:linear-gradient(135deg,rgba(91,26,138,.4),rgba(42,14,80,.8));cursor:pointer;">
+              SUBMIT REVIEW
+            </button>
+          </form>
         </div>
+      @endif
+
+      {{-- EXISTING REVIEWS --}}
+      @forelse($reviews as $review)
+        <div class="review-item">
+          <div class="review-header">
+            <span class="reviewer">{{ strtoupper($review->fname . ' ' . $review->lname) }}</span>
+            <span class="review-date">{{ \Carbon\Carbon::parse($review->created_at)->format('F Y') }}</span>
+          </div>
+          <div class="review-stars">
+            @for($i = 1; $i <= 5; $i++){{ $i <= $review->rating ? '★' : '☆' }}@endfor
+          </div>
+          <p class="review-text">{{ $review->comment }}</p>
+
+          {{-- EDIT FORM — only shown to the review's owner --}}
+          @auth
+            @php $authCustomer = DB::table('customer')->where('user_id', auth()->id())->first(); @endphp
+            @if($authCustomer && $authCustomer->id === $review->customer_id)
+              <details style="margin-top:12px;">
+                <summary style="font-size:9px;letter-spacing:2px;color:var(--muted);cursor:pointer;">EDIT YOUR REVIEW</summary>
+                <form action="{{ route('review.update', $review->review_id) }}" method="POST" style="margin-top:16px;">
+                  @csrf
+                  @method('PUT')
+                  <div style="margin-bottom:12px;">
+                    <div class="star-rating star-rating-edit-{{ $review->review_id }}">
+                      @for($i = 5; $i >= 1; $i--)
+                        <input type="radio" name="rating" id="edit_star{{ $i }}_{{ $review->review_id }}" value="{{ $i }}" {{ $review->rating == $i ? 'checked' : '' }}>
+                        <label for="edit_star{{ $i }}_{{ $review->review_id }}">★</label>
+                      @endfor
+                    </div>
+                  </div>
+                  <textarea name="comment" rows="3"
+                    style="width:100%;background:rgba(18,8,32,.8);border:1px solid rgba(91,26,138,.3);color:var(--white);padding:12px 14px;font-size:12px;outline:none;resize:vertical;box-sizing:border-box;margin-bottom:12px;">{{ $review->comment }}</textarea>
+                  <button type="submit" style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:3px;color:var(--white);padding:10px 28px;border:1px solid rgba(147,51,234,.4);background:rgba(91,26,138,.3);cursor:pointer;">
+                    UPDATE REVIEW
+                  </button>
+                </form>
+              </details>
+            @endif
+          @endauth
+        </div>
+      @empty
+        <p class="no-reviews">NO REVIEWS YET — BE THE FIRST TO REVIEW THIS PRODUCT.</p>
+      @endforelse
+
+    </div>
 
         {{-- SHIPPING --}}
         <div class="tab-content" id="tab-shipping">

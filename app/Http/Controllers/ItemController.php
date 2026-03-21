@@ -199,16 +199,51 @@ public function postCheckout()
         return view('item.show', compact('item'));
     }
 
+    // Get reviews with customer name
     try {
         $reviews = DB::table('reviews')
-            ->where('item_id', $id)
-            ->orderBy('created_at', 'desc')
+            ->join('customer', 'reviews.customer_id', '=', 'customer.id')
+            ->where('reviews.item_id', $id)
+            ->select('reviews.*', 'customer.fname', 'customer.lname')
+            ->orderBy('reviews.created_at', 'desc')
             ->get();
     } catch (\Exception $e) {
         $reviews = collect();
     }
 
-    return view('shop.product', compact('item', 'reviews'));
+    // Check if logged-in user can review
+    $canReview = false;
+    $eligibleOrderId = null;
+
+    if (auth()->check()) {
+        $customer = DB::table('customer')
+            ->where('user_id', auth()->id())
+            ->first();
+
+        if ($customer) {
+            $eligibleOrder = DB::table('order_items')
+                ->join('orders', 'order_items.order_id', '=', 'orders.order_id')
+                ->where('orders.customer_id', $customer->id)
+                ->where('orders.status', 'completed')
+                ->where('order_items.item_id', $id)
+                ->whereNotExists(function ($query) use ($id, $customer) {
+                    $query->select(DB::raw(1))
+                        ->from('reviews')
+                        ->whereColumn('reviews.order_id', 'orders.order_id')
+                        ->where('reviews.item_id', $id)
+                        ->where('reviews.customer_id', $customer->id);
+                })
+                ->select('orders.order_id')
+                ->first();
+
+            if ($eligibleOrder) {
+                $canReview = true;
+                $eligibleOrderId = $eligibleOrder->order_id;
+            }
+        }
+    }
+
+    return view('shop.product', compact('item', 'reviews', 'canReview', 'eligibleOrderId'));
 }
 
     public function edit($id)

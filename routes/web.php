@@ -9,13 +9,23 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileSetupController;
 use App\Http\Controllers\AdminProfileController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\ReviewController;
 use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {return view('home'); })->name('home');
 Route::get('/about', function () { return view('about'); })->name('about');
 
+
+
 // Auth Routes
-Auth::routes(['verify' => true]);
+Auth::routes(['verify' => true, 'logout' => false]);
+
+Route::post('/logout', function () {
+    Auth::logout();
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+    return redirect('/');
+})->name('logout')->middleware('auth');
 
 Route::get('/home', function () {
     if (Auth::check()) {
@@ -46,12 +56,12 @@ Route::get('/product/{id}', [ItemController::class, 'show'])->name('product.show
 Route::prefix('customer')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
     Route::post('/checkout/place', [CheckoutController::class, 'store'])->name('checkout.place');
+    Route::post('/review', [ReviewController::class, 'store'])->name('review.store');
+    Route::put('/review/{review_id}', [ReviewController::class, 'update'])->name('review.update');
 
-    Route::get('/logout', [CustomerController::class, 'logout'])->name('user.logout');
     Route::get('/profile', [CustomerController::class, 'create'])->name('customer.profile');
     Route::post('/profile', [CustomerController::class, 'store'])->name('customer.store');
-    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
+    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('customer.home');
     Route::get('/profile/edit', [ProfileSetupController::class, 'edit'])->name('customer.profile.edit');
     Route::put('/profile/edit', [ProfileSetupController::class, 'update'])->name('customer.profile.update');
 });
@@ -61,6 +71,9 @@ Route::prefix('customer')->middleware(['auth', 'verified'])->group(function () {
 
 // Admin Routes
 Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
+    Route::get('/reviews', [ReviewController::class, 'index'])->name('admin.reviews.index');
+    Route::delete('/reviews/{review_id}', [ReviewController::class, 'destroy'])->name('admin.reviews.destroy');
+
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
     Route::get('/profile', [AdminProfileController::class, 'show'])->name('admin.profile');
     Route::put('/profile', [AdminProfileController::class, 'update'])->name('admin.profile.update');
