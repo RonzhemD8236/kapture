@@ -117,7 +117,7 @@
 
   {{-- SEARCH BAR --}}
   <div class="search-wrap">
-    <form action="{{ url('/') }}" method="GET" class="search-form">
+    <form action="{{ route('getItems') }}" method="GET" class="search-form">
       <input
         class="search-input"
         type="text"
@@ -133,7 +133,7 @@
 
     {{-- SIDEBAR FILTERS --}}
     <aside class="sidebar">
-      <form action="{{ url('/') }}" method="GET" id="filter-form">
+      <form action="{{ route('getItems') }}" method="GET" id="filter-form">
         {{-- keep search query when filtering --}}
         @if(request('search'))
           <input type="hidden" name="search" value="{{ request('search') }}">
@@ -174,7 +174,7 @@
           @if(request('search'))
             <div class="filter-tag">
               "{{ request('search') }}"
-              <a href="{{ url('/') }}">×</a>
+              <a href="{{ route('getItems') }}">×</a>
             </div>
           @endif
           @foreach((array) request('category', []) as $cat)
