@@ -12,7 +12,18 @@ use Illuminate\Support\Facades\Auth;
 
 
 // Auth Routes
-Auth::routes();
+Auth::routes(['verify' => true]);
+
+Route::get('/home', function () {
+    if (Auth::check()) {
+        $customer = \DB::table('customer')->where('id', Auth::id())->first();
+        if (!$customer) {
+            return redirect('/customer/profile/setup');
+        }
+        return redirect('/customer/home');
+    }
+    return redirect('/login');
+})->middleware('auth');
 
 // Public Routes
 Route::get('/', [ItemController::class, 'getItems'])->name('getItems');
@@ -21,15 +32,18 @@ Route::get('/shopping-cart', [ItemController::class, 'getCart'])->name('getCart'
 Route::get('/reduce/{id}', [ItemController::class, 'getReduceByOne'])->name('reduceByOne');
 Route::get('/remove/{id}', [ItemController::class, 'getRemoveItem'])->name('removeItem');
 
-// Customer Routes
 Route::prefix('customer')->middleware(['auth'])->group(function () {
+    Route::get('/profile/setup', [ProfileSetupController::class, 'show'])->name('customer.profile.setup');
+    Route::post('/profile/setup', [ProfileSetupController::class, 'store'])->name('customer.profile.setup.store');
+});
+
+// Customer Routes
+Route::prefix('customer')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/checkout', [ItemController::class, 'postCheckout'])->name('checkout');
     Route::get('/logout', [CustomerController::class, 'logout'])->name('user.logout');
     Route::get('/profile', [CustomerController::class, 'create'])->name('customer.profile');
     Route::post('/profile', [CustomerController::class, 'store'])->name('customer.store');
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-    Route::get('/profile/setup', [ProfileSetupController::class, 'show'])->name('customer.profile.setup');
-    Route::post('/profile/setup', [ProfileSetupController::class, 'store'])->name('customer.profile.setup.store');
     Route::get('/profile/edit', [ProfileSetupController::class, 'edit'])->name('customer.profile.edit');
     Route::put('/profile/edit', [ProfileSetupController::class, 'update'])->name('customer.profile.update');
 });

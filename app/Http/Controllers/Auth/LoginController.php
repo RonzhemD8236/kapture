@@ -11,7 +11,7 @@ class LoginController extends Controller
 {
     use AuthenticatesUsers;
 
-    protected $redirectTo = '/customer/home';
+    protected $redirectTo = '/home';
 
     public function __construct()
     {
@@ -36,6 +36,12 @@ class LoginController extends Controller
 
         if ($user->role === 'admin') {
             return redirect('/admin/dashboard');
+        }
+
+        // Check if customer has completed profile setup
+        $customer = \DB::table('customer')->where('id', $user->id)->first();
+        if (!$customer) {
+            return redirect('/customer/profile/setup');
         }
 
         return redirect('/customer/home');
