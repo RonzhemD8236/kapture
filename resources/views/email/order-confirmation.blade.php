@@ -16,6 +16,24 @@
     .total-row td { font-weight:bold; color:#120820; border-top:2px solid #eee; }
     .footer { background:#04030a; padding:24px 40px; text-align:center; }
     .footer p { color:#6b5f7c; font-size:10px; letter-spacing:2px; margin:0; }
+
+    .status-badge { display:inline-block; font-size:9px; letter-spacing:3px; padding:5px 14px; border-radius:2px; font-family:Georgia,serif; margin-bottom:20px; }
+    .status-pending    { background:#fdf3dc; color:#a07020; border:1px solid #e6c87a; }
+    .status-processing { background:#dceeff; color:#1a4a8a; border:1px solid #7ab0e6; }
+    .status-completed  { background:#dcf5e8; color:#1a6a3a; border:1px solid #7ae6aa; }
+    .status-cancelled  { background:#fde8e8; color:#8a1a1a; border:1px solid #e67a7a; }
+
+    .tracker { display:flex; justify-content:space-between; align-items:center; margin:28px 0; padding:20px; background:#f9f9f9; border:1px solid #eee; }
+    .step { text-align:center; font-size:9px; letter-spacing:2px; flex:1; }
+    .step-circle { width:28px; height:28px; border-radius:50%; margin:0 auto 8px; display:flex; align-items:center; justify-content:center; font-size:11px; }
+    .step-active  .step-circle { background:#04030a; color:#c9a84c; border:1px solid #c9a84c; }
+    .step-done    .step-circle { background:#c9a84c; color:#04030a; }
+    .step-pending .step-circle { background:#f0f0f0; color:#aaa; border:1px solid #ddd; }
+    .step-active  .step-label { color:#120820; font-weight:bold; }
+    .step-done    .step-label { color:#c9a84c; }
+    .step-pending .step-label { color:#bbb; }
+    .step-line      { flex:0.5; height:1px; background:#eee; margin-bottom:20px; }
+    .step-line-done { background:#c9a84c; }
   </style>
 </head>
 <body>
@@ -25,9 +43,49 @@
       <p>Where Vision Meets Precision</p>
     </div>
     <div class="body">
-      <h2>ORDER CONFIRMED</h2>
-      <p>Thank you for your order. We are preparing your instruments with the utmost care.</p>
+
+      {{-- MESSAGE PER STATUS --}}
+      @php $status = strtolower($order->status); @endphp
+
+      @if($status === 'pending')
+        <h2>ORDER RECEIVED</h2>
+        <p>Thank you for your order. We have received it and are preparing to process your instruments.</p>
+      @elseif($status === 'processing')
+        <h2>ORDER IN PROGRESS</h2>
+        <p>Your order is currently being processed. We are carefully preparing your instruments.</p>
+      @elseif($status === 'completed')
+        <h2>ORDER COMPLETED</h2>
+        <p>Your order has been completed. Thank you for choosing Kapture — we hope your instruments serve you well.</p>
+      @elseif($status === 'cancelled')
+        <h2>ORDER CANCELLED</h2>
+        <p>Your order has been cancelled. If you have any questions, please contact our support team.</p>
+      @endif
+
+      {{-- PROGRESS TRACKER (hidden if cancelled) --}}
+      @if($status !== 'cancelled')
+        @php
+          $steps = ['pending', 'processing', 'completed'];
+          $currentIndex = array_search($status, $steps);
+          if ($currentIndex === false) $currentIndex = 0;
+        @endphp
+        <div class="tracker">
+          @foreach($steps as $i => $step)
+            @if($i > 0)
+              <div class="step-line {{ $i <= $currentIndex ? 'step-line-done' : '' }}"></div>
+            @endif
+            <div class="step {{ $i < $currentIndex ? 'step-done' : ($i === $currentIndex ? 'step-active' : 'step-pending') }}">
+              <div class="step-circle">
+                @if($i < $currentIndex) ✓ @else {{ $i + 1 }} @endif
+              </div>
+              <div class="step-label">{{ strtoupper($step) }}</div>
+            </div>
+          @endforeach
+        </div>
+      @endif
+
       <p><strong>Order #{{ $order->order_id }}</strong></p>
+
+      {{-- ORDER TABLE --}}
       <table>
         <thead>
           <tr>
@@ -49,11 +107,14 @@
           </tr>
         </tbody>
       </table>
-      <p>Your order will be processed within 1–2 business days.</p>
+
+      @if($status !== 'cancelled')
+        <p>Your order will be processed within 1–2 business days.</p>
+      @endif
 
       {{-- DOWNLOAD RECEIPT BUTTON --}}
       <div style="text-align:center; margin:32px 0;">
-        <a href="{{ url('/customer/receipt/' . $order->order_id) }}" 
+        <a href="{{ url('/customer/receipt/' . $order->order_id) }}"
            style="font-family:Georgia,serif; font-size:10px; letter-spacing:4px; color:#c9a84c; border:1px solid #c9a84c; padding:14px 32px; text-decoration:none; background:#04030a; display:inline-block;">
           DOWNLOAD RECEIPT
         </a>
