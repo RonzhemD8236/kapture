@@ -29,7 +29,7 @@ Route::get('/home', function () {
 })->middleware('auth');
 
 // Public Routes
-Route::get('/', [ItemController::class, 'getItems'])->name('getItems');
+Route::get('/shop', [ItemController::class, 'getItems'])->name('getItems');
 Route::get('/add-to-cart/{id}', [ItemController::class, 'addToCart'])->name('addToCart');
 Route::get('/shopping-cart', [ItemController::class, 'getCart'])->name('getCart');
 Route::get('/reduce/{id}', [ItemController::class, 'getReduceByOne'])->name('reduceByOne');
