@@ -8,6 +8,7 @@ use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Services\DataTable;
+use Illuminate\Support\Facades\Auth;
 
 class UsersDataTable extends DataTable
 {
@@ -21,7 +22,7 @@ class UsersDataTable extends DataTable
                 return '<span class="user-status ' . $class . '">' . $label . '</span>';
             })
             ->addColumn('action', function ($row) {
-                if ((int)$row->id === (int)auth()->id()) {
+                if ((int)$row->id === (int)Auth::id()) {
                     return '<div class="action-wrap">—</div>';
                 }
 
