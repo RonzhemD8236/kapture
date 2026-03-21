@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\OrderConfirmation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class CheckoutController extends Controller
 {
@@ -93,6 +95,14 @@ class CheckoutController extends Controller
                 ->where('item_id', $item['item_id'])
                 ->decrement('quantity', $item['quantity']);
         }
+
+        // Send confirmation email
+        Mail::to(Auth::user()->email)
+            ->send(new OrderConfirmation(
+                (object)['order_id' => $orderId],
+                $cart,
+                $total
+            ));
 
         session()->forget('cart');
 

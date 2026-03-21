@@ -5,8 +5,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    protected $table = 'orders'; // ✅ not a reserved word
-    protected $primaryKey = 'order_id'; 
+    protected $table = 'orders';
+    protected $primaryKey = 'order_id';
 
     protected $fillable = [
         'customer_id',
@@ -14,4 +14,9 @@ class Order extends Model
         'status',
         'order_date',
     ];
+
+    public function items()
+    {
+        return $this->hasMany(OrderItem::class, 'order_id', 'order_id');
+    }
 }
