@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\DataTables\ItemsDataTable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
@@ -26,24 +27,12 @@ class ItemController extends Controller
 
     // ── Admin CRUD ─────────────────────────────────────────────────────────
 
-    public function index(Request $request)
+    public function index(ItemsDataTable $dataTable, Request $request)
     {
-        $query = DB::table('item as i')
-            ->leftJoin('stock as s', 'i.item_id', '=', 's.item_id')
-            ->select('i.item_id', 'i.title', 'i.category', 'i.description', 'i.sell_price', 'i.cost_price', 'i.img_path', 'i.images', 's.quantity')
-            ->whereNull('i.deleted_at');
-
-        if ($request->filled('search')) {
-            $query->where(function($q) use ($request) {
-                $q->where('i.title', 'like', '%' . $request->search . '%')
-                  ->orWhere('i.category', 'like', '%' . $request->search . '%')
-                  ->orWhere('i.description', 'like', '%' . $request->search . '%');
-            });
+        if ($request->ajax()) {
+            return $dataTable->ajax();
         }
-
-        $items = $query->orderBy('i.item_id')->paginate(10)->withQueryString();
-
-        return view('item.index', compact('items'));
+        return $dataTable->render('item.index');
     }
 
     public function create()

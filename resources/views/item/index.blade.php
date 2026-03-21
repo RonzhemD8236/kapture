@@ -3,8 +3,6 @@
 @section('body')
 
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500&display=swap');
-
     :root {
         --kapture-black: #0a0a0f;
         --kapture-deep: #0f0d1a;
@@ -17,398 +15,117 @@
         --kapture-border-subtle: rgba(168, 155, 194, 0.12);
     }
 
-    .kapture-page {
-        background: var(--kapture-black);
-        min-height: 100vh;
-        font-family: 'Montserrat', sans-serif;
-        color: var(--kapture-text);
-        padding: 3rem 2.5rem;
-    }
+    .kapture-page { background: var(--kapture-black); min-height: 100vh; font-family: 'Montserrat', sans-serif; color: var(--kapture-text); padding: 3rem 2.5rem; }
 
-    /* ── Page Header ── */
-    .page-header {
-        margin-bottom: 3rem;
-        border-bottom: 1px solid var(--kapture-border);
-        padding-bottom: 2rem;
-    }
+    .page-header { margin-bottom: 3rem; border-bottom: 1px solid var(--kapture-border); padding-bottom: 2rem; }
+    .page-eyebrow { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+    .page-eyebrow::before, .page-eyebrow::after { content: ''; flex: 0 0 40px; height: 1px; background: var(--kapture-gold); }
+    .page-eyebrow span { font-size: 0.85rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--kapture-gold); }
+    .page-title { font-family: 'Cormorant Garamond', serif; font-size: 3.2rem; font-weight: 300; color: #fff; letter-spacing: 0.02em; line-height: 1.1; margin: 0; }
+    .page-subtitle { font-size: 0.9rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--kapture-muted); margin-top: 0.5rem; font-style: italic; }
 
-    .page-eyebrow {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        margin-bottom: 0.75rem;
-    }
+    .kapture-toolbar { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem; }
 
-    .page-eyebrow::before,
-    .page-eyebrow::after {
-        content: '';
-        flex: 0 0 40px;
-        height: 1px;
-        background: var(--kapture-gold);
-    }
+    .btn-kapture-primary { background: transparent; border: 1px solid var(--kapture-gold); color: var(--kapture-gold); font-family: 'Montserrat', sans-serif; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; padding: 0.7rem 1.6rem; text-decoration: none; transition: all 0.3s; display: inline-flex; align-items: center; gap: 0.5rem; }
+    .btn-kapture-primary:hover { background: var(--kapture-gold); color: var(--kapture-black); text-decoration: none; }
 
-    .page-eyebrow span {
-        font-size: 0.85rem;
-        font-weight: 500;
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-        color: var(--kapture-gold);
-    }
+    .btn-kapture-secondary { background: transparent; border: 1px solid var(--kapture-border-subtle); color: var(--kapture-lilac); font-family: 'Montserrat', sans-serif; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; padding: 0.7rem 1.6rem; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; }
+    .btn-kapture-secondary:hover { border-color: var(--kapture-lilac); color: #fff; text-decoration: none; }
 
-    .page-title {
-        font-family: 'Cormorant Garamond', serif;
-        font-size: 3.2rem;
-        font-weight: 300;
-        color: #fff;
-        letter-spacing: 0.02em;
-        line-height: 1.1;
-        margin: 0;
-    }
+    .kapture-file-input { background: transparent; border: 1px solid var(--kapture-border-subtle); color: var(--kapture-text); font-family: 'Montserrat', sans-serif; font-size: 0.85rem; padding: 0.65rem 0.75rem; width: auto; }
+    .kapture-file-input:focus { outline: none; border-color: var(--kapture-gold); box-shadow: none; background: transparent; }
 
-    .page-subtitle {
-        font-size: 0.9rem;
-        letter-spacing: 0.15em;
-        text-transform: uppercase;
-        color: var(--kapture-muted);
-        margin-top: 0.5rem;
-        font-style: italic;
-    }
+    .toolbar-divider { width: 1px; height: 36px; background: var(--kapture-border-subtle); }
 
-    /* ── Toolbar ── */
-    .kapture-toolbar {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        flex-wrap: wrap;
-        margin-bottom: 2rem;
-    }
-
-    .btn-kapture-primary {
-        background: transparent;
-        border: 1px solid var(--kapture-gold);
-        color: var(--kapture-gold);
-        font-family: 'Montserrat', sans-serif;
-        font-size: 0.8rem;
-        font-weight: 500;
-        letter-spacing: 0.15em;
-        text-transform: uppercase;
-        padding: 0.7rem 1.6rem;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .btn-kapture-primary:hover {
-        background: var(--kapture-gold);
-        color: var(--kapture-black);
-        text-decoration: none;
-    }
-
-    .btn-kapture-secondary {
-        background: transparent;
-        border: 1px solid var(--kapture-border-subtle);
-        color: var(--kapture-lilac);
-        font-family: 'Montserrat', sans-serif;
-        font-size: 0.8rem;
-        font-weight: 500;
-        letter-spacing: 0.15em;
-        text-transform: uppercase;
-        padding: 0.7rem 1.6rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .btn-kapture-secondary:hover {
-        border-color: var(--kapture-lilac);
-        color: #fff;
-    }
-
-    .kapture-file-input {
-        background: transparent;
-        border: 1px solid var(--kapture-border-subtle);
-        color: var(--kapture-text);
-        font-family: 'Montserrat', sans-serif;
-        font-size: 0.85rem;
-        padding: 0.65rem 0.75rem;
-        letter-spacing: 0.05em;
-        width: auto;
-    }
-
-    .kapture-file-input:focus {
-        outline: none;
-        border-color: var(--kapture-gold);
-        box-shadow: none;
-        background: transparent;
-        color: var(--kapture-text);
-    }
-
-    .toolbar-divider {
-        width: 1px;
-        height: 36px;
-        background: var(--kapture-border-subtle);
-    }
-
-    /* ── Search ── */
-    .kapture-search-wrap {
-        position: relative;
-        margin-left: auto;
-    }
-
-    .kapture-search {
-        background: transparent;
-        border: none;
-        border-bottom: 1px solid var(--kapture-border-subtle);
-        color: var(--kapture-text);
-        font-family: 'Montserrat', sans-serif;
-        font-size: 0.85rem;
-        letter-spacing: 0.08em;
-        padding: 0.5rem 2rem 0.5rem 0;
-        width: 240px;
-        transition: border-color 0.3s;
-    }
-
+    .kapture-search-wrap { position: relative; margin-left: auto; }
+    .kapture-search { background: transparent; border: none; border-bottom: 1px solid var(--kapture-border-subtle); color: var(--kapture-text); font-family: 'Montserrat', sans-serif; font-size: 0.85rem; letter-spacing: 0.08em; padding: 0.5rem 2rem 0.5rem 0; width: 240px; transition: border-color 0.3s; }
     .kapture-search::placeholder { color: var(--kapture-muted); font-style: italic; }
+    .kapture-search:focus { outline: none; border-bottom-color: var(--kapture-gold); box-shadow: none; background: transparent; }
+    .search-icon { position: absolute; right: 0; top: 50%; transform: translateY(-50%); color: var(--kapture-muted); font-size: 0.95rem; pointer-events: none; }
 
-    .kapture-search:focus {
-        outline: none;
-        border-bottom-color: var(--kapture-gold);
-        box-shadow: none;
-        background: transparent;
-        color: var(--kapture-text);
+    .kapture-table-wrap { border: 1px solid var(--kapture-border-subtle); overflow: hidden; }
+
+    /* DataTable overrides */
+    #items-table_wrapper .dataTables_length,
+    #items-table_wrapper .dataTables_filter,
+    #items-table_wrapper .dataTables_info { display: none !important; }
+
+    table#items-table { width: 100% !important; border-collapse: collapse; margin: 0 !important; }
+    table#items-table thead tr { background: rgba(201,168,76,0.04); border-bottom: 1px solid var(--kapture-border); }
+    table#items-table thead th { font-family: 'Montserrat', sans-serif; font-size: 0.75rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--kapture-gold) !important; padding: 1.1rem 1.4rem; border: none !important; background: transparent !important; white-space: nowrap; }
+    table#items-table tbody tr { border-bottom: 1px solid var(--kapture-border-subtle); transition: background 0.2s; }
+    table#items-table tbody tr:last-child { border-bottom: none; }
+    table#items-table tbody tr:hover { background: rgba(168,155,194,0.05) !important; }
+    table#items-table tbody td { padding: 1.1rem 1.4rem; border: none !important; vertical-align: middle; color: var(--kapture-text); font-size: 0.9rem; background: transparent !important; }
+
+    /* Pagination */
+    #items-table_wrapper .dataTables_paginate { display: flex !important; align-items: center !important; justify-content: space-between !important; padding: 1.25rem 1.4rem; border-top: 1px solid var(--kapture-border-subtle); }
+    #items-table_wrapper .dataTables_paginate ul.pagination { margin: 0; display: flex; gap: 0.25rem; }
+    #items-table_wrapper .dataTables_paginate .paginate_button { background: transparent !important; border: 1px solid var(--kapture-border-subtle) !important; color: var(--kapture-muted) !important; font-family: 'Montserrat', sans-serif !important; font-size: 0.8rem !important; padding: 0.55rem 1.1rem !important; border-radius: 0 !important; transition: all 0.2s; box-shadow: none !important; }
+    #items-table_wrapper .dataTables_paginate .paginate_button:hover { background: transparent !important; border-color: var(--kapture-gold) !important; color: var(--kapture-gold) !important; }
+    #items-table_wrapper .dataTables_paginate .paginate_button.current,
+    #items-table_wrapper .dataTables_paginate .paginate_button.current:hover { background: var(--kapture-gold) !important; border-color: var(--kapture-gold) !important; color: var(--kapture-black) !important; font-weight: 600 !important; }
+    #items-table_wrapper .dataTables_paginate .paginate_button.disabled,
+    #items-table_wrapper .dataTables_paginate .paginate_button.disabled:hover { opacity: 0.3 !important; background: transparent !important; }
+    #items-table_wrapper .dataTables_paginate .kap-prev-next { display: flex; gap: 0.5rem; }
+
+    /* Override Bootstrap pagination to Kapture gold */
+    #items-table_wrapper .dataTables_paginate .pagination .page-item .page-link {
+        background: transparent !important;
+        border: 1px solid var(--kapture-border-subtle) !important;
+        color: var(--kapture-muted) !important;
+        font-family: 'Montserrat', sans-serif !important;
+        font-size: 0.7rem !important;
+        padding: 0.35rem 0.7rem !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        transition: all 0.2s;
+    }
+    #items-table_wrapper .dataTables_paginate .pagination .page-item .page-link:hover {
+        background: transparent !important;
+        border-color: var(--kapture-gold) !important;
+        color: var(--kapture-gold) !important;
+    }
+    #items-table_wrapper .dataTables_paginate .pagination .page-item.active .page-link {
+        background: var(--kapture-gold) !important;
+        border-color: var(--kapture-gold) !important;
+        color: var(--kapture-black) !important;
+        font-weight: 600 !important;
+        font-size: 0.7rem !important;
+        padding: 0.35rem 0.7rem !important;
+    }
+    #items-table_wrapper .dataTables_paginate .pagination .page-item.disabled .page-link {
+        opacity: 0.3 !important;
+        background: transparent !important;
+        border-color: var(--kapture-border-subtle) !important;
+        color: var(--kapture-muted) !important;
     }
 
-    .search-icon {
-        position: absolute;
-        right: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--kapture-muted);
-        font-size: 0.95rem;
-        pointer-events: none;
-    }
-
-    /* ── Table ── */
-    .kapture-table-wrap {
-        border: 1px solid var(--kapture-border-subtle);
-        overflow: hidden;
-    }
-
-    .kapture-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 0.9rem;
-        letter-spacing: 0.03em;
-        margin: 0;
-    }
-
-    .kapture-table thead tr {
-        border-bottom: 1px solid var(--kapture-border);
-        background: rgba(201, 168, 76, 0.04);
-    }
-
-    .kapture-table thead th {
-        font-family: 'Montserrat', sans-serif;
-        font-weight: 500;
-        font-size: 0.75rem;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-        color: var(--kapture-gold);
-        padding: 1.1rem 1.4rem;
-        border: none;
-        white-space: nowrap;
-    }
-
-    .kapture-table tbody tr {
-        border-bottom: 1px solid var(--kapture-border-subtle);
-        transition: background 0.2s ease;
-    }
-
-    .kapture-table tbody tr:last-child { border-bottom: none; }
-    .kapture-table tbody tr:hover { background: rgba(168, 155, 194, 0.05); }
-
-    .kapture-table tbody td {
-        padding: 1.1rem 1.4rem;
-        border: none;
-        vertical-align: middle;
-        color: var(--kapture-text);
-    }
-
-    .item-id {
-        font-family: 'Cormorant Garamond', serif;
-        font-size: 1.1rem;
-        color: var(--kapture-muted);
-        font-style: italic;
-    }
-
-    .item-img {
-        width: 80px;
-        height: 80px;
-        object-fit: cover;
-        border: 1px solid var(--kapture-border-subtle);
-        display: block;
-    }
-
-    .item-description {
-        font-family: 'Cormorant Garamond', serif;
-        font-size: 1.25rem;
-        font-weight: 400;
-        color: #fff;
-        letter-spacing: 0.02em;
-    }
-
-    .item-price {
-        font-family: 'Montserrat', sans-serif;
-        font-size: 0.9rem;
-        color: var(--kapture-gold-light);
-        letter-spacing: 0.04em;
-    }
-
-    .item-cost { color: var(--kapture-text); }
-
-    .item-qty {
-        font-family: 'Cormorant Garamond', serif;
-        font-size: 1.5rem;
-        color: var(--kapture-text);
-    }
-
-    .qty-low { color: #c06060; }
-
-    /* ── Action Buttons ── */
     .action-wrap { display: flex; align-items: center; gap: 0.5rem; }
-
-    .btn-action-edit {
-        background: transparent;
-        border: 1px solid var(--kapture-border-subtle);
-        color: var(--kapture-lilac);
-        width: 36px;
-        height: 36px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.85rem;
-        transition: all 0.2s;
-        text-decoration: none;
-    }
-
-    .btn-action-edit:hover {
-        border-color: var(--kapture-lilac);
-        color: #fff;
-        background: rgba(168, 155, 194, 0.1);
-        text-decoration: none;
-    }
-
-    .btn-action-delete {
-        background: transparent;
-        border: 1px solid rgba(192, 96, 96, 0.3);
-        color: #c06060;
-        width: 36px;
-        height: 36px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.85rem;
-        transition: all 0.2s;
-        cursor: pointer;
-    }
-
-    .btn-action-delete:hover {
-        border-color: #c06060;
-        background: rgba(192, 96, 96, 0.1);
-        color: #e08080;
-    }
-
-    /* ── Empty State ── */
-    .empty-state { text-align: center; padding: 4rem 2rem; }
-    .empty-state-icon { font-size: 2.5rem; color: var(--kapture-muted); margin-bottom: 1rem; opacity: 0.4; }
-    .empty-state-text {
-        font-family: 'Cormorant Garamond', serif;
-        font-size: 1.3rem;
-        font-style: italic;
-        color: var(--kapture-muted);
-        letter-spacing: 0.05em;
-    }
-
-    /* ── Pagination ── */
-    .kapture-pagination {
-        margin-top: 1.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .kap-page-btn {
-        background: transparent;
-        border: 1px solid var(--kapture-border-subtle);
-        color: var(--kapture-muted);
-        font-family: 'Montserrat', sans-serif;
-        font-size: 0.8rem;
-        letter-spacing: 0.08em;
-        padding: 0.45rem 0.85rem;
-        text-decoration: none;
-        transition: all 0.2s;
-        display: inline-block;
-    }
-    .kap-page-btn:hover { border-color: var(--kapture-gold); color: var(--kapture-gold); text-decoration: none; }
-
-    .kap-page-active {
-        background: var(--kapture-gold);
-        border: 1px solid var(--kapture-gold);
-        color: var(--kapture-black);
-        font-weight: 600;
-        padding: 0.45rem 0.85rem;
-        font-size: 0.8rem;
-        font-family: 'Montserrat', sans-serif;
-        display: inline-block;
-    }
-
-    .kap-nav-btn {
-        background: transparent;
-        border: 1px solid var(--kapture-border-subtle);
-        color: var(--kapture-muted);
-        font-family: 'Montserrat', sans-serif;
-        font-size: 0.8rem;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        padding: 0.45rem 1.1rem;
-        text-decoration: none;
-        transition: all 0.2s;
-        display: inline-block;
-    }
-    .kap-nav-btn:hover { border-color: var(--kapture-gold); color: var(--kapture-gold); text-decoration: none; }
-    .kap-nav-disabled { opacity: 0.3; pointer-events: none; }
+    .btn-action-edit { background: transparent; border: 1px solid var(--kapture-border-subtle); color: var(--kapture-lilac); width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.85rem; transition: all 0.2s; text-decoration: none; }
+    .btn-action-edit:hover { border-color: var(--kapture-lilac); color: #fff; background: rgba(168,155,194,0.1); text-decoration: none; }
+    .btn-action-delete { background: transparent; border: 1px solid rgba(192,96,96,0.3); color: #c06060; width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.85rem; transition: all 0.2s; cursor: pointer; }
+    .btn-action-delete:hover { border-color: #c06060; background: rgba(192,96,96,0.1); color: #e08080; }
 </style>
 
 @include('layouts.flash-messages')
 
 <div class="kapture-page">
 
-    {{-- Page Header --}}
     <div class="page-header">
-        <div class="page-eyebrow">
-            <span>Inventory Management</span>
-        </div>
+        <div class="page-eyebrow"><span>Inventory Management</span></div>
         <h1 class="page-title">Collection Items</h1>
         <p class="page-subtitle">Fine Photographic Instruments — Catalogue</p>
     </div>
 
-    {{-- Toolbar --}}
     <div class="kapture-toolbar">
-
         <a href="{{ route('items.create') }}" class="btn-kapture-primary">
             <i class="bi bi-plus"></i> Add Item
         </a>
-
         <a href="{{ route('items.trash') }}" class="btn-kapture-secondary">
             <i class="bi bi-trash"></i> Trash
         </a>
-
         <div class="toolbar-divider"></div>
-
         <form action="{{ route('item.import') }}" method="POST" enctype="multipart/form-data"
               class="d-inline-flex align-items-center gap-2">
             @csrf
@@ -417,113 +134,40 @@
                 <i class="bi bi-file-earmark-spreadsheet"></i> Import
             </button>
         </form>
-
-        <form method="GET" action="{{ route('items.index') }}" class="kapture-search-wrap">
-            <input type="text"
-                   name="search"
-                   value="{{ request('search') }}"
-                   placeholder="Search items..."
-                   class="kapture-search">
+        <div class="kapture-search-wrap">
+            <input type="text" id="itemSearch" placeholder="Search items..." class="kapture-search">
             <i class="bi bi-search search-icon"></i>
-        </form>
-
+        </div>
     </div>
 
-    {{-- Table --}}
     <div class="kapture-table-wrap">
-        <table class="kapture-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Image</th>
-                    <th>Item Name</th>
-                    <th>Sell Price</th>
-                    <th>Cost Price</th>
-                    <th>Qty</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($items as $item)
-                <tr>
-                    <td><span class="item-id">#{{ $item->item_id }}</span></td>
-                    <td>
-                        <img class="item-img"
-                             src="{{ $item->img_path === 'default.jpg'? asset('images/default.jpg'): asset('storage/' . $item->img_path) }}"
-                             alt="{{ $item->description }}">
-                    </td>
-                    <td><span class="item-description">{{ $item->title }}</span></td>
-                    <td><span class="item-price">₱ {{ number_format($item->sell_price, 2) }}</span></td>
-                    <td><span class="item-price item-cost">₱ {{ number_format($item->cost_price, 2) }}</span></td>
-                    <td>
-                        <span class="item-qty {{ ($item->quantity ?? 0) <= 5 ? 'qty-low' : '' }}">
-                            {{ $item->quantity ?? 0 }}
-                        </span>
-                    </td>
-                    <td>
-                        <div class="action-wrap">
-                            <a href="{{ route('items.edit', $item->item_id) }}" class="btn-action-edit">
-                                <i class="bi bi-pencil"></i>
-                            </a>
-                            <form action="{{ route('items.destroy', $item->item_id) }}"
-                                  method="POST"
-                                  class="d-inline"
-                                  onsubmit="return confirm('Remove this item from the collection?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn-action-delete">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="7">
-                        <div class="empty-state">
-                            <div class="empty-state-icon"><i class="bi bi-camera"></i></div>
-                            <p class="empty-state-text">No items found in the collection.</p>
-                        </div>
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
+        {{ $dataTable->table(['id' => 'items-table', 'class' => '']) }}
     </div>
-
-    {{-- Pagination --}}
-    @if ($items->hasPages())
-    <div class="kapture-pagination">
-
-        {{-- Page numbers LEFT --}}
-        <div class="d-flex align-items-center gap-1">
-            @foreach ($items->getUrlRange(1, $items->lastPage()) as $page => $url)
-                @if ($page == $items->currentPage())
-                    <span class="kap-page-active">{{ $page }}</span>
-                @else
-                    <a href="{{ $url }}" class="kap-page-btn">{{ $page }}</a>
-                @endif
-            @endforeach
-        </div>
-
-        {{-- Prev / Next RIGHT --}}
-        <div class="d-flex align-items-center gap-2 ms-auto">
-            @if ($items->onFirstPage())
-                <span class="kap-nav-btn kap-nav-disabled">← Prev</span>
-            @else
-                <a href="{{ $items->previousPageUrl() }}" class="kap-nav-btn">← Prev</a>
-            @endif
-
-            @if ($items->hasMorePages())
-                <a href="{{ $items->nextPageUrl() }}" class="kap-nav-btn">Next →</a>
-            @else
-                <span class="kap-nav-btn kap-nav-disabled">Next →</span>
-            @endif
-        </div>
-
-    </div>
-    @endif
 
 </div>
+
+@push('scripts')
+{{ $dataTable->scripts() }}
+<script>
+    $(document).ready(function () {
+        var table = $('#items-table').DataTable();
+
+        $('#itemSearch').on('keyup', function () {
+            table.search(this.value).draw();
+        });
+
+        $('#items-table').on('draw.dt', function () {
+            var $pag  = $('#items-table_wrapper .dataTables_paginate');
+            var $ul   = $pag.find('ul.pagination');
+            var $prev = $ul.find('.previous').detach();
+            var $next = $ul.find('.next').detach();
+            $pag.find('.kap-prev-next').remove();
+            $('<span class="kap-prev-next"></span>').append($prev).append($next).appendTo($pag);
+        });
+
+        table.draw();
+    });
+</script>
+@endpush
+
 @endsection
