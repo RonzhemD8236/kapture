@@ -23,7 +23,7 @@ class UsersDataTable extends DataTable
             })
             ->addColumn('action', function ($row) {
                 if ((int)$row->id === (int)Auth::id()) {
-                    return '<div class="action-wrap">—</div>';
+                    return '';
                 }
 
                 return '
