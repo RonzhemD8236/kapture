@@ -75,6 +75,6 @@ class CustomerController extends Controller
     public function logout()
     {
         Auth::logout();
-        return redirect()->route('getItems');
+        return redirect()->route('login');
     }
 }

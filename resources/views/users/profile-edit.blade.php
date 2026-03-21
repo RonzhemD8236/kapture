@@ -1,4 +1,4 @@
-@extends('layouts.base')
+@extends('layouts.customer')
 
 @section('head')
     @parent
@@ -148,7 +148,7 @@
     </style>
 @endsection
 
-@section('body')
+@section('content')
 <div class="edit-page">
     <div class="edit-card">
 

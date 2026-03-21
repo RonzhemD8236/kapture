@@ -1,4 +1,4 @@
-@extends('layouts.base')
+@extends('layouts.customer')
 
 @section('head')
     @parent
@@ -153,7 +153,7 @@
     </style>
 @endsection
 
-@section('body')
+@section('content')
 <div class="setup-page">
     <div class="setup-card">
 

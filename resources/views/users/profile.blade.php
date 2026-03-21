@@ -1,4 +1,4 @@
-@extends('layouts.base')
+@extends('layouts.customer')
 
 @section('head')
     @parent
@@ -153,7 +153,7 @@
     </style>
 @endsection
 
-@section('body')
+@section('content')
 <div class="profile-page">
     <div class="profile-wrap">
 
@@ -259,6 +259,9 @@
         <div class="profile-actions">
             <a href="{{ route('home') }}" class="btn-kap btn-kap-primary">
                 <i class="fa-regular fa-shop"></i> Browse Shop
+            </a>
+            <a href="{{ route('customer.profile.edit') }}" class="btn-kap btn-kap-gold">
+                <i class="fa-regular fa-pen-to-square"></i> Edit Profile
             </a>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf

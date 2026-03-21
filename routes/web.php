@@ -27,6 +27,7 @@ Route::post('/logout', function () {
     return redirect('/');
 })->name('logout')->middleware('auth');
 
+
 Route::get('/home', function () {
     if (Auth::check()) {
         $customer = \DB::table('customer')->where('id', Auth::id())->first();
