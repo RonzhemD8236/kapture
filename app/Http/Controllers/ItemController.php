@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ItemsImport;
+use App\Models\Item;
 
 class ItemController extends Controller
 {
@@ -381,19 +382,41 @@ public function postCheckout()
         return redirect()->route('items.index')->with('success', 'Items imported successfully.');
     }
 
-        public function home(Request $request)
-    {
-        $query = DB::table('item')->whereNull('deleted_at');
+    public function home(Request $request)
+{
+    $search = $request->input('search');
+    $method = $request->input('method', 'like');
 
-        if ($request->filled('search')) {
-            $query->where(function ($q) use ($request) {
-                $q->where('title', 'LIKE', '%' . $request->search . '%')
-                ->orWhere('description', 'LIKE', '%' . $request->search . '%')
-                ->orWhere('category', 'LIKE', '%' . $request->search . '%');
-            });
-        }
+    if ($search) {
+        $items = match($method) {
 
-        $items = $query->paginate(6)->withQueryString();
-        return view('home', compact('items'));
+            // ── Option 1: LIKE query ───────────────────
+            'like' => Item::where(function ($q) use ($search) {
+                            $q->where('title',        'LIKE', "%{$search}%")
+                              ->orWhere('description', 'LIKE', "%{$search}%")
+                              ->orWhere('category',    'LIKE', "%{$search}%");
+                        })
+                        ->orderBy('item_id', 'desc')
+                        ->paginate(9)
+                        ->withQueryString(),
+
+            // ── Option 2: Model Scope ──────────────────
+            'scope' => Item::search($search)
+                        ->orderBy('item_id', 'desc')
+                        ->paginate(9)
+                        ->withQueryString(),
+
+            // ── Option 3: Laravel Scout ────────────────
+            'scout' => Item::search($search)
+                        ->query(fn($q) => $q->orderBy('item_id', 'desc'))
+                        ->paginate(9),
+
+            default => Item::orderBy('item_id', 'desc')->paginate(9)->withQueryString(),
+        };
+    } else {
+        $items = Item::orderBy('item_id', 'desc')->paginate(9)->withQueryString();
     }
+
+    return view('home', compact('items', 'search', 'method'));
+}
 }

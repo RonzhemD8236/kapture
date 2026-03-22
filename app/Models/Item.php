@@ -21,6 +21,7 @@ class Item extends Model
         'cost_price',
         'sell_price',
         'img_path',
+        'images',
     ];
 
     // ── Option 3: Laravel Scout ────────────────────────
@@ -34,7 +35,8 @@ class Item extends Model
     }
 
     // ── Option 2: Model Scope ──────────────────────────
-    public function scopeSearch($query, $term)
+    // Renamed to scopeKeyword to avoid collision with Scout's search()
+    public function scopeKeyword($query, $term)
     {
         return $query->where(function ($q) use ($term) {
             $q->where('title',        'LIKE', "%{$term}%")
