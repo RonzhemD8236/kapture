@@ -83,8 +83,8 @@
                     <div class="kap-item-row">
                         <img class="kap-item-img"
                              src="{{ $order->img_path !== 'default.jpg' ? asset('storage/' . $order->img_path) : asset('images/default.jpg') }}"
-                             alt="{{ $order->description }}">
-                        <span class="kap-item-name">{{ $order->description }}</span>
+                             alt="{{ $order->title ?? $order->description }}">
+                        <span class="kap-item-name">{{ $order->title ?? $order->description }}</span>
                         <span class="kap-item-price">₱ {{ number_format($order->sell_price, 2) }}</span>
                         <span class="kap-item-qty">× {{ $order->quantity }}</span>
                     </div>

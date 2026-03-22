@@ -23,7 +23,7 @@ class OrderController extends Controller
         ->join('order_items as ol', 'o.order_id', '=', 'ol.order_id')
         ->join('item as i', 'ol.item_id', '=', 'i.item_id')
         ->where('o.order_id', $id)
-        ->select('i.description', 'ol.quantity', 'i.img_path', 'i.sell_price')
+        ->select('i.title', 'i.description', 'ol.quantity', 'i.img_path', 'i.sell_price')
         ->get();
 
     $total = $orders->map(function ($item) {
@@ -46,7 +46,7 @@ class OrderController extends Controller
             $orderItems = DB::table('order_items as ol')
                 ->join('item as i', 'ol.item_id', '=', 'i.item_id')
                 ->where('ol.order_id', $id)
-                ->select('i.description', 'ol.quantity', 'i.sell_price')
+                ->select('i.title', 'i.description', 'ol.quantity', 'i.sell_price')
                 ->get();
 
             $orderTotal = $orderItems->sum(fn($item) => $item->sell_price * $item->quantity);
