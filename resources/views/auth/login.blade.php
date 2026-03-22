@@ -341,8 +341,7 @@
                         value="{{ old('email') }}"
                         placeholder="your@email.com"
                         required autocomplete="email" autofocus
-                        class="{{ $errors->has('email') ? 'is-invalid' : '' }}"
-                    >
+                        class="{{ $errors->has('email') ? 'is-invalid' : '' }}">
                     @error('email')
                         <span class="invalid-feedback">{{ $message }}</span>
                     @enderror
@@ -354,22 +353,12 @@
                         id="password" type="password" name="password"
                         placeholder="••••••••••"
                         required autocomplete="current-password"
-                        class="{{ $errors->has('password') ? 'is-invalid' : '' }}"
-                    >
+                        class="{{ $errors->has('password') ? 'is-invalid' : '' }}">
                     @error('password')
                         <span class="invalid-feedback">{{ $message }}</span>
                     @enderror
                 </div>
-
-                <div class="lc-field-row">
-                    <label class="lc-remember">
-                        <input type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-                        <span>Remember Me</span>
-                    </label>
-                    @if (Route::has('password.request'))
-                        <a href="{{ route('password.request') }}" class="lc-forgot">Forgot Password?</a>
-                    @endif
-                </div>
+                <br>
 
                 <button type="submit" class="lc-submit">Sign In to Your Account</button>
             </form>

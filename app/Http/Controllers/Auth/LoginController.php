@@ -19,9 +19,6 @@ class LoginController extends Controller
         $this->middleware('web');
     }
 
-    /**
-     * Check is_active AND redirect based on role after login.
-     */
     protected function authenticated(Request $request, $user)
     {
         if (!$user->is_active) {
@@ -38,7 +35,6 @@ class LoginController extends Controller
             return redirect('/admin/dashboard');
         }
 
-        // Check if customer has completed profile setup
         $customer = \DB::table('customer')->where('id', $user->id)->first();
         if (!$customer) {
             return redirect('/customer/profile/setup');
