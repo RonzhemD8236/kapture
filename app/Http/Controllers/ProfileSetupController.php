@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileSetupController extends Controller
 {
@@ -92,7 +93,7 @@ class ProfileSetupController extends Controller
         if ($request->hasFile('profile_photo')) {
             // Delete old photo if not default
             if ($photoPath && $photoPath !== 'default.jpg') {
-                \Storage::disk('public')->delete($photoPath);
+                Storage::disk('public')->delete($photoPath);
             }
             $photoPath = $request->file('profile_photo')->store('profile_photos', 'public');
         }
