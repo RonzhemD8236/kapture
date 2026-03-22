@@ -16,7 +16,7 @@ class ProfileSetupController extends Controller
     public function show()
     {
         // If profile already completed, go to home
-        $customer = DB::table('customer')->where('id', Auth::id())->first();
+        $customer = DB::table('customer')->where('user_id', Auth::id())->first();
         if ($customer) {
             return redirect()->route('home');
         }
@@ -44,7 +44,6 @@ class ProfileSetupController extends Controller
 
         // Save to customer table
         DB::table('customer')->insert([
-            'id'          => Auth::id(),
             'user_id'     => Auth::id(),
             'fname'       => $request->fname,
             'lname'       => $request->lname,
@@ -53,6 +52,8 @@ class ProfileSetupController extends Controller
             'town'        => $request->town,
             'phone'       => $request->phone,
             'zipcode'     => $request->zipcode,
+            'created_at'  => now(),
+            'updated_at'  => now(),
         ]);
 
         // Update users table with photo and full name
@@ -67,7 +68,7 @@ class ProfileSetupController extends Controller
     public function edit()
     {
         $user     = DB::table('users')->where('id', Auth::id())->first();
-        $customer = DB::table('customer')->where('id', Auth::id())->first();
+        $customer = DB::table('customer')->where('user_id', Auth::id())->first();
         return view('users.profile-edit', compact('user', 'customer'));
     }
 
@@ -97,9 +98,9 @@ class ProfileSetupController extends Controller
         }
 
         // Update customer table
-        $customer = DB::table('customer')->where('id', Auth::id())->first();
+        $customer = DB::table('customer')->where('user_id', Auth::id())->first();
         if ($customer) {
-            DB::table('customer')->where('id', Auth::id())->update([
+            DB::table('customer')->where('user_id', Auth::id())->update([
                 'fname'       => $request->fname,
                 'lname'       => $request->lname,
                 'title'       => $request->title ?? '',
@@ -110,7 +111,6 @@ class ProfileSetupController extends Controller
             ]);
         } else {
             DB::table('customer')->insert([
-                'id'          => Auth::id(),
                 'user_id'     => Auth::id(),
                 'fname'       => $request->fname,
                 'lname'       => $request->lname,
@@ -119,6 +119,8 @@ class ProfileSetupController extends Controller
                 'town'        => $request->town,
                 'phone'       => $request->phone,
                 'zipcode'     => $request->zipcode,
+                'created_at'  => now(),
+                'updated_at'  => now(),
             ]);
         }
 

@@ -11,20 +11,22 @@ class ItemsImport implements ToModel, WithHeadingRow
 {
     public function model(array $row)
     {
-        if (!is_numeric($row['cost_price']) || !is_numeric($row['sell_price'])) {
+        if (!is_numeric($row['cost_price'] ?? null) || !is_numeric($row['sell_price'] ?? null)) {
             return null;
         }
 
         $item = Item::create([
-            'description' => $row['product_name'],
+            'title'       => $row['title'] ?? $row['product_name'] ?? 'Untitled',
+            'description' => $row['description'] ?? $row['product_name'] ?? '',
+            'category'    => $row['category'] ?? 'Uncategorized',
             'cost_price'  => $row['cost_price'],
             'sell_price'  => $row['sell_price'],
-            'img_path'    => $row['image'] ?? 'default.jpg',
+            'img_path'    => $row['image'] ?? $row['img_path'] ?? 'default.jpg',
         ]);
 
         $stock = new Stock();
         $stock->item_id  = $item->item_id;
-        $stock->quantity = $row[4] ?? 0;
+        $stock->quantity = $row['quantity'] ?? $row['stock'] ?? 0;
         $stock->save();
 
         return $item;
