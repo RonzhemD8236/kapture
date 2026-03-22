@@ -77,6 +77,7 @@
     .kapture-search::placeholder { color: var(--kapture-muted); font-style: italic; }
     .kapture-search:focus { outline: none; border-bottom-color: var(--kapture-gold); background: transparent; color: var(--kapture-text); }
     .search-icon { position: absolute; right: 0; top: 50%; transform: translateY(-50%); color: var(--kapture-muted); font-size: 0.95rem; pointer-events: none; }
+
     .kapture-table-wrap { border: 1px solid var(--kapture-border-subtle); overflow: hidden; }
 
     #reviews-table_wrapper .dataTables_length,
@@ -99,7 +100,7 @@
     table#reviews-table tbody tr:hover { background: rgba(168,155,194,.05) !important; }
     table#reviews-table tbody td { padding: 1rem 1.4rem; border: none !important; vertical-align: middle; color: var(--kapture-text); font-size: 0.85rem; background: transparent !important; }
 
-    .stars { color: var(--kapture-gold); letter-spacing: 2px; }
+    .stars { color: var(--kapture-gold); letter-spacing: 2px; font-size: 1rem; }
 
     .btn-delete {
         background: transparent;
@@ -113,37 +114,58 @@
     }
     .btn-delete:hover { background: #c06060; color: var(--kapture-black); }
 
+    /* PAGINATION */
     #reviews-table_wrapper .dataTables_paginate {
-        display: flex !important; align-items: center !important;
-        justify-content: space-between !important;
         padding: 1.25rem 1.4rem;
         border-top: 1px solid var(--kapture-border-subtle);
+        text-align: right;
     }
-    #reviews-table_wrapper .dataTables_paginate ul.pagination { margin: 0; display: flex; gap: 0.25rem; }
-    #reviews-table_wrapper .dataTables_paginate .paginate_button {
+    #reviews-table_wrapper .dataTables_paginate span,
+    #reviews-table_wrapper .dataTables_paginate a {
+        display: inline-block !important;
         background: transparent !important;
-        border: 1px solid var(--kapture-border-subtle) !important;
+        border: 1px solid rgba(168,155,194,.2) !important;
         color: var(--kapture-muted) !important;
         font-family: 'Montserrat', sans-serif !important;
-        font-size: 0.8rem !important;
-        letter-spacing: 0.08em;
-        padding: 0.55rem 1.1rem !important;
+        font-size: 0.75rem !important;
+        font-weight: 400 !important;
+        letter-spacing: 0.1em !important;
+        padding: 0.5rem 1.1rem !important;
         border-radius: 0 !important;
-        transition: all 0.2s;
+        margin: 0 2px !important;
+        cursor: pointer !important;
+        text-decoration: none !important;
+        line-height: 1.5 !important;
+        box-shadow: none !important;
+        transition: border-color 0.2s, color 0.2s !important;
     }
-    #reviews-table_wrapper .dataTables_paginate .paginate_button:hover {
+    #reviews-table_wrapper .dataTables_paginate a:hover {
         background: transparent !important;
         border-color: var(--kapture-gold) !important;
         color: var(--kapture-gold) !important;
+        box-shadow: none !important;
     }
-    #reviews-table_wrapper .dataTables_paginate .paginate_button.current,
-    #reviews-table_wrapper .dataTables_paginate .paginate_button.current:hover {
+    #reviews-table_wrapper .dataTables_paginate a.current,
+    #reviews-table_wrapper .dataTables_paginate a.current:hover {
         background: var(--kapture-gold) !important;
         border-color: var(--kapture-gold) !important;
-        color: var(--kapture-black) !important;
+        color: #04030a !important;
         font-weight: 600 !important;
     }
-    #reviews-table_wrapper .dataTables_paginate .kap-prev-next { display: flex; gap: 0.5rem; }
+    #reviews-table_wrapper .dataTables_paginate a.disabled,
+    #reviews-table_wrapper .dataTables_paginate a.disabled:hover {
+        border-color: rgba(168,155,194,.1) !important;
+        color: rgba(168,155,194,.25) !important;
+        cursor: default !important;
+    }
+    #reviews-table_wrapper .dataTables_processing {
+        background: rgba(8,6,18,.9) !important;
+        color: var(--kapture-gold) !important;
+        border: 1px solid var(--kapture-border-subtle) !important;
+        font-family: 'Montserrat', sans-serif !important;
+        font-size: 0.8rem !important;
+        letter-spacing: 0.1em !important;
+    }
 </style>
 
 @include('layouts.flash-messages')
@@ -166,7 +188,7 @@
     </div>
 
     <div class="kapture-table-wrap">
-        <table id="reviews-table">
+        <table id="reviews-table" width="100%">
             <thead>
                 <tr>
                     <th>#</th>
@@ -178,31 +200,7 @@
                     <th>ACTION</th>
                 </tr>
             </thead>
-            <tbody>
-                @foreach($reviews as $review)
-                <tr>
-                    <td>{{ $review->review_id }}</td>
-                    <td>{{ strtoupper($review->fname . ' ' . $review->lname) }}</td>
-                    <td>{{ $review->item_title }}</td>
-                    <td>
-                        <span class="stars">
-                            @for($i = 1; $i <= 5; $i++){{ $i <= $review->rating ? '★' : '☆' }}@endfor
-                        </span>
-                    </td>
-                    <td>{{ Str::limit($review->comment, 60) }}</td>
-                    <td>{{ \Carbon\Carbon::parse($review->created_at)->format('M d, Y') }}</td>
-                    <td>
-                        <form action="{{ route('admin.reviews.destroy', $review->review_id) }}"
-                              method="POST"
-                              onsubmit="return confirm('Delete this review?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn-delete">DELETE</button>
-                        </form>
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
+            <tbody></tbody>
         </table>
     </div>
 
@@ -210,30 +208,35 @@
 
 @push('scripts')
 <script>
-    $(document).ready(function () {
-        var table = $('#reviews-table').DataTable({
-            pageLength: 10,
-            order: [[5, 'desc']],
-            columnDefs: [{ orderable: false, targets: 6 }]
-        });
-
-        $('#reviewSearch').on('keyup', function () {
-            table.search(this.value).draw();
-        });
-
-        $('#reviews-table').on('draw.dt', function () {
-            var $pag  = $('#reviews-table_wrapper .dataTables_paginate');
-            var $ul   = $pag.find('ul.pagination');
-            var $prev = $ul.find('.previous').detach();
-            var $next = $ul.find('.next').detach();
-            $pag.find('.kap-prev-next').remove();
-            var $navWrap = $('<span class="kap-prev-next"></span>');
-            $navWrap.append($prev).append($next);
-            $pag.append($navWrap);
-        });
-
-        table.draw();
+$(document).ready(function () {
+    var table = $('#reviews-table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: '{{ route('admin.reviews.index') }}',
+        columns: [
+            { data: 'review_id',     name: 'reviews.review_id' },
+            { data: 'customer_name', name: 'customer.fname',    searchable: true },
+            { data: 'item_title',    name: 'item.title',        searchable: true },
+            { data: 'stars',         name: 'reviews.rating',    orderable: false },
+            { data: 'comment',       name: 'reviews.comment',   searchable: true },
+            { data: 'date',          name: 'reviews.created_at' },
+            { data: 'action',        name: 'action',            orderable: false, searchable: false },
+        ],
+        pageLength: 10,
+        order: [[5, 'desc']],
+        pagingType: 'simple_numbers',
+        language: {
+            paginate: { previous: '&larr; PREV', next: 'NEXT &rarr;' },
+            processing: 'LOADING...',
+            emptyTable: 'No reviews found.',
+            zeroRecords: 'No reviews match your search.',
+        },
     });
+
+    $('#reviewSearch').on('keyup', function () {
+        table.search(this.value).draw();
+    });
+});
 </script>
 @endpush
 

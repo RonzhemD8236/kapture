@@ -5,6 +5,7 @@ use App\Models\Review;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
 
 class ReviewController extends Controller
 {
@@ -79,23 +80,36 @@ class ReviewController extends Controller
     // Admin: list all reviews
     public function index(Request $request)
     {
-        $reviews = DB::table('reviews')
-            ->join('customer', 'reviews.customer_id', '=', 'customer.id')
-            ->join('item', 'reviews.item_id', '=', 'item.item_id')
-            ->select(
-                'reviews.review_id',
-                'reviews.rating',
-                'reviews.comment',
-                'reviews.created_at',
-                'reviews.updated_at',
-                'customer.fname',
-                'customer.lname',
-                'item.title as item_title'
-            )
-            ->orderBy('reviews.created_at', 'desc')
-            ->get();
+        if ($request->ajax()) {
+            $reviews = DB::table('reviews')
+                ->join('customer', 'reviews.customer_id', '=', 'customer.id')
+                ->join('item', 'reviews.item_id', '=', 'item.item_id')
+                ->select(
+                    'reviews.review_id',
+                    'reviews.rating',
+                    'reviews.comment',
+                    'reviews.created_at',
+                    'customer.fname',
+                    'customer.lname',
+                    'item.title as item_title'
+                )
+                ->orderBy('reviews.created_at', 'desc');
 
-        return view('dashboard.reviews', compact('reviews'));
+            return DataTables::query($reviews)
+                ->addColumn('customer_name', fn($row) => strtoupper($row->fname . ' ' . $row->lname))
+                ->addColumn('stars', fn($row) => str_repeat('★', $row->rating) . str_repeat('☆', 5 - $row->rating))
+                ->addColumn('date', fn($row) => \Carbon\Carbon::parse($row->created_at)->format('M d, Y'))
+                ->addColumn('action', fn($row) => '
+                    <form action="' . route('admin.reviews.destroy', $row->review_id) . '" method="POST" onsubmit="return confirm(\'Delete this review?\')">
+                        ' . csrf_field() . method_field('DELETE') . '
+                        <button type="submit" class="btn-delete">DELETE</button>
+                    </form>
+                ')
+                ->rawColumns(['stars', 'action'])
+                ->make(true);
+        }
+
+        return view('dashboard.reviews');
     }
 
     // Admin: delete a review
