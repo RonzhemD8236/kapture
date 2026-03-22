@@ -164,7 +164,7 @@
           </tr>
           <tr>
             <td class="info-label">DATE</td>
-            <td class="info-value">{{ \Carbon\Carbon::parse($order->created_at)->format('M d, Y') }}</td>
+            <td class="info-value">{{ \Carbon\Carbon::parse($order->order_date ?? $order->created_at)->format('M d, Y') }}</td>
           </tr>
           <tr>
             <td class="info-label">STATUS</td>

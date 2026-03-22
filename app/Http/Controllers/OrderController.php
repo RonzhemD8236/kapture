@@ -51,12 +51,12 @@ class OrderController extends Controller
 
             $orderTotal = $orderItems->sum(fn($item) => $item->sell_price * $item->quantity);
 
-            // Customer + email
+            // Customer + email + address
             $customer = DB::table('users as u')
                 ->join('customer as c', 'u.id', '=', 'c.user_id')
                 ->join('orders as o', 'o.customer_id', '=', 'c.id')
                 ->where('o.order_id', $id)
-                ->select('u.email', 'c.fname', 'c.lname')
+                ->select('u.email', 'c.fname', 'c.lname', 'c.addressline', 'c.town', 'c.zipcode', 'c.phone')
                 ->first();
 
             Mail::to($customer->email)->send(

@@ -8,6 +8,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Address;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class SendOrderStatus extends Mailable
 {
@@ -29,8 +30,8 @@ class SendOrderStatus extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address('noreply@larashop.test', 'Kapture'),
-            subject: 'Your Kapture Order Status Update',
+            from: new Address('noreply@kapture.com', 'Kapture'),
+            subject: 'Your Kapture Order #' . str_pad($this->order->order_id, 6, '0', STR_PAD_LEFT) . ' — Status Update',
         );
     }
 
@@ -49,6 +50,26 @@ class SendOrderStatus extends Mailable
 
     public function attachments(): array
     {
-        return [];
+        // Build cart array from orderItems for the PDF template
+        $cart = $this->orderItems->map(fn($item) => [
+            'title'      => $item->description,
+            'quantity'   => $item->quantity,
+            'sell_price' => $item->sell_price,
+            'subtotal'   => $item->sell_price * $item->quantity,
+        ])->toArray();
+
+        $pdf = Pdf::loadView('email.receipt-pdf', [
+            'order'    => $this->order,
+            'cart'     => $cart,
+            'total'    => $this->orderTotal,
+            'customer' => $this->customer,
+        ]);
+
+        return [
+            \Illuminate\Mail\Mailables\Attachment::fromData(
+                fn () => $pdf->output(),
+                'receipt-' . $this->order->order_id . '.pdf'
+            )->withMime('application/pdf'),
+        ];
     }
 }
