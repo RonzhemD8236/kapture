@@ -254,17 +254,27 @@
     <p class="sec-intro">Each instrument handpicked for optical excellence, mechanical artistry, and enduring legacy.</p>
 
     {{-- SEARCH --}}
-    <form action="{{ url('/') }}" method="GET" class="search-form" onsubmit="if(!this.search.value.trim()){window.location='{{ url('/') }}?expanded=1';return false;}">
-  <input type="hidden" name="expanded" value="1">
+     <form action="{{ route('customer.home') }}" method="GET" class="search-form"
+      onsubmit="if(!this.search.value.trim()){window.location='{{ route('customer.home') }}?expanded=1';return false;}">
+
+      <input type="hidden" name="expanded" value="1">
+
+      {{-- Search method selector --}}
+      <select name="method" style="background:rgba(18,8,32,.8); border:1px solid rgba(91,26,138,.3); border-right:none; color:var(--gold); padding:14px 14px; font-family:'Cinzel',serif; font-size:9px; letter-spacing:2px; outline:none; cursor:pointer;">
+      <option value="like"  {{ request('method') === 'like'  || !request('method') ? 'selected' : '' }}>LIKE</option>
+      <option value="scope" {{ request('method') === 'scope' ? 'selected' : '' }}>SCOPE</option>
+      <option value="scout" {{ request('method') === 'scout' ? 'selected' : '' }}>SCOUT</option>
+    </select>
+
       <input
-        class="search-input"
-        type="text"
-        name="search"
-        placeholder="SEARCH INSTRUMENTS..."
-        value="{{ request('search') }}"
+          class="search-input"
+          type="text"
+          name="search"
+          placeholder="SEARCH INSTRUMENTS..."
+          value="{{ request('search') }}"
       >
       <button type="submit" class="search-btn">SEARCH</button>
-    </form>
+  </form>
 
     {{-- NO RESULTS --}}
     @if($items->count() === 0)
